@@ -1,0 +1,79 @@
+<?php
+namespace NGS\Patterns;
+
+use InvalidArgumentException;
+use NGS\Client\Exception\InvalidRequestException;
+use NGS\Client\ReportingProxy;
+use NGS\Patterns\GenericSearch;
+use NGS\Patterns\Specification;
+use NGS\Utils;
+
+class Templater
+{
+    private $class;
+    private $file;
+
+    /**
+     * Creates a generic templater
+     *
+     * @param string $file Name of template file located on server
+     * @param string $class Class name of domain object
+     * @throws InvalidArgumentException If invalid arguments provided
+     */
+    public function __construct($file, $class=null)
+    {
+        $this->file  = $file;
+
+        if ($class && is_string($class)) {
+            if (!class_exists($class)) {
+                throw new InvalidArgumentException('Cannot find domain object class "'.$class.'"');
+            }
+            $this->class = $class;
+        } else if($class !== null) {
+            throw new InvalidArgumentException('Class name was not a string');
+        }
+    }
+
+    /**
+     * Fills template with domain object
+     * 
+     * @param string $uri
+     * @return string Binary content of genarated template
+     * @throws InvalidArgumentException If data source was invalid type
+     */
+    public function find($uri)
+    {
+        $proxy = new ReportingProxy();
+        $content = $proxy->findTemplater($this->file, $this->class, $uri);
+        return base64_decode($content);
+    }
+
+    /**
+     * Fills template with data returned from specification or generic search
+     * 
+     * @param \NGS\Patterns\Specification|\NGS\Patterns\GenericSearch $source 
+     * data source
+     * @return string Binary content of genarated template
+     * @throws InvalidArgumentException If data source was invalid type
+     */
+    public function search($source)
+    {
+        $proxy = new ReportingProxy();
+        if ($source instanceof Specification) {
+            $content = $proxy->searchTemplater(
+                $this->file,
+                $source
+            );
+        }
+        elseif ($source instanceof GenericSearch) {
+            $content = $proxy->searchTemplaterGeneric(
+                $this->file,
+                $source
+            );
+        }
+        else {
+            throw new InvalidArgumentException('Cannot search templater with invalid typye "'.Utils::getType($source).'"');
+        }
+        return base64_decode($content);
+    }
+}

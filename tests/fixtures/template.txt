@@ -1,0 +1,1 @@
+<foo><bar>[[bar]]</bar><num>[[num]]</num></foo>

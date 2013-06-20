@@ -1,0 +1,15 @@
+{
+    "name": "ngs/dsl-core",
+    "type": "library",
+    "description": "PHP integration with DSL platform",
+    "homepage": "https://dsl-platform.com",
+    "version": "1.0.0",
+    "require": {
+        "php": ">=5.3.8",
+        "lib-curl": "*",
+        "ext-SimpleXML": "*"
+    },
+    "autoload": {
+        "psr-0": {"NGS\\": "/"}
+    }
+}
