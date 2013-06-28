@@ -5,7 +5,6 @@ if(!is_file($bootstrapPath))
         "It seems you are missing DSL-platform project files\n".
         "To run tests, you need to download the zipped DSL-platform project from http://dsl-platform.com and extract the contents of platform folder to: ".__DIR__.'/platform/'."\n");
 
-require_once __DIR__.'/../NGS/Requirements.php';
 require_once __DIR__.'/BaseTestCase.php';
 require_once __DIR__.'/platform/Bootstrap.php';
 

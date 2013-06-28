@@ -5,7 +5,7 @@ use Test\FooFoo\searchByBar;
 use NGS\Client\Exception\NotFoundException;
 use NGS\Patterns\GenericSearch;
 
-class SearchTest extends \PHPUnit_Framework_TestCase
+class SearchTest extends \BaseTestCase
 {
     protected $items = array();
 

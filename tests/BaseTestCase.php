@@ -3,6 +3,8 @@ use NGS\Client\StandardProxy;
 
 abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
 {
+    private static $echoLogEnabled;
+
     protected function deleteAll($class)
     {
         $items = $class::findAll();
@@ -24,5 +26,23 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
             throw new InvalidArgumentException('TestCase file not found: "'.$path.'"');
         }
         return $path;
+    }
+
+    public function echoLog($event, $data)
+    {
+        if (self::$echoLogEnabled && $event === 'request.sent') {
+            echo $data['request']."\n";
+            echo 'RESPONSE:'."\n";
+            echo $data['response']['body']."\n\n";
+        }
+    }
+
+    // quick debug: echo all server communication
+    public function echoRequests($enabled=true)
+    {
+        if (!isset(self::$echoLogEnabled))
+            \NGS\Client\RestHttp::instance()->addSubscriber(array($this, 'echoLog'));
+        
+        self::$echoLogEnabled = $enabled;
     }
 }

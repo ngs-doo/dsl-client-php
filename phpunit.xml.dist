@@ -11,8 +11,8 @@
 
     <php>
         <ini name="error_reporting" value="E_ALL"/>
-        <env name="s3_key" value="">
-        <env name="s3_secret" value="">
+        <env name="s3_key" value="" />
+        <env name="s3_secret" value="" />
     </php>
 
     <filter>
@@ -20,4 +20,8 @@
         <directory suffix=".php">/NGS</directory>
       </whitelist>
     </filter>
+
+    <listeners>
+        <listener class="FailLogListener" file="./tests/unit/FailLogListener.php"/>
+    </listeners>
 </phpunit>
