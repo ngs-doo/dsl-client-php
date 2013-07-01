@@ -42,8 +42,7 @@ class TemplaterTest extends \BaseTestCase
 
         $proxy = new ReportingProxy();
         $result = $proxy->findTemplater('template.txt', 'Test\\Foo', 'a');
-        $content = base64_decode($result);
-        $this->assertSame($expected, $content);
+        $this->assertSame($expected, $result);
     }
 
     public function testReportingProxyFindTemplaterWithoutURI()
@@ -54,8 +53,7 @@ class TemplaterTest extends \BaseTestCase
 
         $proxy = new ReportingProxy();
         $result = $proxy->findTemplater('template.txt', 'Test\\Foo');
-        $content = base64_decode($result);
-        $this->assertSame($expected, $content);
+        $this->assertSame($expected, $result);
     }
 
     public function testReportingProxySearchTemplater()
@@ -65,8 +63,7 @@ class TemplaterTest extends \BaseTestCase
         $proxy = new ReportingProxy();
         $spec = new \Test\Foo\greaterThan(array('min' => 2));
         $result = $proxy->searchTemplater('template.txt', $spec);
-        $content = base64_decode($result);
-        $this->assertSame($expected, $content);
+        $this->assertSame($expected, $result);
     }
 
     public function testTemplaterSearch()
@@ -92,14 +89,16 @@ class TemplaterTest extends \BaseTestCase
 
     public function testTemplaterOlapCube()
     {
+        $expected = '<foo><bar>a</bar><num>[[num]]</num></foo>'."\r\n".
+                    '<foo><bar>b</bar><num>[[num]]</num></foo>'."\r\n".
+                    '<foo><bar>c</bar><num>[[num]]</num></foo>';
         $dimensions = array('bar');
         $facts = array('count', 'total', 'average');
+        $order = array('bar' => true);
         $cube = new \Test\FooCube();
-        
-        $content = $cube->createXml($dimensions, $facts);
 
-
-        // @todo assert
+        $result = $cube->createXml($dimensions, $facts, $order);
+        $this->assertSame($expected, $result);
     }
 
     public function testTemplaterOlapCubeWithSpecification()

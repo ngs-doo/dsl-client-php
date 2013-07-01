@@ -44,8 +44,7 @@ class Templater
     public function find($uri)
     {
         $proxy = new ReportingProxy();
-        $content = $proxy->findTemplater($this->file, $this->class, $uri);
-        return base64_decode($content);
+        return $proxy->findTemplater($this->file, $this->class, $uri);
     }
 
     /**
@@ -60,13 +59,13 @@ class Templater
     {
         $proxy = new ReportingProxy();
         if ($source instanceof Specification) {
-            $content = $proxy->searchTemplater(
+            return $proxy->searchTemplater(
                 $this->file,
                 $source
             );
         }
         elseif ($source instanceof GenericSearch) {
-            $content = $proxy->searchTemplaterGeneric(
+            return $proxy->searchTemplaterGeneric(
                 $this->file,
                 $source
             );
@@ -74,6 +73,5 @@ class Templater
         else {
             throw new InvalidArgumentException('Cannot search templater with invalid typye "'.Utils::getType($source).'"');
         }
-        return base64_decode($content);
     }
 }

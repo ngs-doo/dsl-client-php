@@ -226,13 +226,13 @@ class ReportingProxy
     {
         $name = Name::full($class);
         $uriQuery = $uri!==null ? '/'.$uri : '';
-        $response =
+        return
             $this->http->sendRequest(
                 self::REPORTING_URI.'/templater/'.rawurlencode($file).'/'.rawurlencode($name).$uriQuery,
                 'GET',
                 null,
-                array(200));
-        return RestHttp::parseResult($response, $class);
+                array(200),
+                'application/octet-stream');
     }
 
     /**
@@ -248,13 +248,13 @@ class ReportingProxy
     {
         $object = Name::parent($specification);
         $name = Name::base($specification);
-        $response =
+        return
             $this->http->sendRequest(
                 self::REPORTING_URI.'/templater/'.rawurlencode($file).'/'.rawurlencode($object).'?specification='.rawurlencode($name),
                 'PUT',
                 $specification->toJson(),
-                array(200));
-        return RestHttp::parseResult($response, Name::toClass($object));
+                array(200),
+                'application/octet-stream');
     }
 
     /**
@@ -269,12 +269,12 @@ class ReportingProxy
         GenericSearch $search)
     {
         $object = Name::full($search->getObject());
-        $response =
+        return
             $this->http->sendRequest(
                 self::REPORTING_URI.'/templater-generic/'.rawurlencode($file).'/'.rawurlencode($object),
                 'PUT',
                 json_encode($search->getFilters()),
-                array(200));
-        return RestHttp::parseResult($response, Name::toClass($object));
+                array(200),
+                'application/octet-stream');
     }
 }
