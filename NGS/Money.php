@@ -30,7 +30,7 @@ class Money extends \NGS\BigDecimal
         if (is_int($value)) {
             $this->setValue($value);
         }
-        elseif (is_string($value) && preg_match('/^[-+]?\\d+([.]\\d{1,2})?$/u', $value)) {
+        elseif (is_string($value) && preg_match('/^[-+]?\\d+([.]\\d+)?$/u', $value)) {
             $this->setValue($value);
         }
         elseif (is_float($value)) {
@@ -46,12 +46,42 @@ class Money extends \NGS\BigDecimal
     }
 
     /**
+     * Rounds up
+     *
+     * @param string|int|float $value
+     */
+    protected function setValue($value)
+    {
+        if ($value === null) {
+            throw new \InvalidArgumentException('BigDecimal value cannot be null');
+        }
+        elseif (is_string($value)) {
+            if (!filter_var($value, FILTER_VALIDATE_INT)
+                && !preg_match('/^[-+]?\\d+([.]\\d+)?$/u', $value)) {
+                throw new \InvalidArgumentException('Invalid characters in BigDecimal constructor string: '.$value);
+            }
+            $rounded = round((float)$value, $this->scale, PHP_ROUND_HALF_UP);
+            $this->value = bcadd($rounded, 0, $this->scale);
+        }
+        elseif (is_int($value)) {
+            $this->value = bcadd($value, 0, $this->scale);
+        }
+        elseif (is_float($value)) {
+            $rounded = round($value, $this->scale, PHP_ROUND_HALF_UP);
+            $this->value = bcadd($rounded, 0, $this->scale);
+        }
+        else {
+            throw new \InvalidArgumentException('Invalid type for BigDecimal value, type was: "'.Utils::getType($value).'"');
+        }
+    }
+
+    /**
      * Converts all elements in array to \NGS\Money instance
      *
      * @param array $items Source array, each element must be a valid argument for Money constructor
      * @param bool $allowNullValuesValues Allow elements with null value in array
      * @return array Resulting \NGS\Money array
-     * @throws \InvalidArgumentException If any element is null or invalid type for Money constructor
+     * @throws \InvalidArgumentException If any element is null or  invalid type for Money constructor
      */
     public static function toArray(array $items, $allowNullValuesValues=false)
     {

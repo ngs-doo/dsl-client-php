@@ -35,7 +35,6 @@ class MoneyTest extends PHPUnit_Framework_TestCase
     public static function providerInvalid()
     {
         return array(
-            // array('12.123'),
             array('12.14.42'),
             array(array()),
             array(true),
@@ -73,5 +72,29 @@ class MoneyTest extends PHPUnit_Framework_TestCase
     public function testInvalid($value)
     {
         $foo = new Money($value);
+    }
+
+    public function testRounding()
+    {
+        // values must be rounded up
+
+        $m = new Money('0.004');
+        $this->assertSame('0.00', $m->value);
+
+        $m = new Money('0.049');
+        $this->assertSame('0.05', $m->value);
+
+        $m = new Money('0.005');
+        $this->assertSame('0.01', $m->value);
+
+        $m = new Money('0.49999');
+        $this->assertSame('0.50', $m->value);
+
+        $m = new Money(0.005);
+        $this->assertSame('0.01', $m->value);
+
+        $m = new Money(0.49999);
+        $this->assertSame('0.50', $m->value);
+
     }
 }
