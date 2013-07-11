@@ -107,8 +107,22 @@ module Test
     root Address
     {
         string Name;
-        string(5)[] PostalCode;
+        string(5) PostalCode;
         location At;
+        point P;
+    }
+
+    root Shape
+    {
+        Point[] points;
+        Point[]? normals;
+        Timestamp[]? times;
+    }
+
+    root AreaMap
+    {
+        Location[] bars;
+        Location[]? stores;
     }
 
     root FooFoo (bar)
@@ -149,8 +163,18 @@ module Test
         string name;
     }
 
-    value tmp
+    value tmpCompile
     {
-        string abc;
+        string abcdd;
+    }
+
+    root Typer
+    {
+        map map;
+    }
+
+    value please
+    {
+        string recompile;
     }
 }

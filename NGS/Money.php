@@ -27,21 +27,10 @@ class Money extends \NGS\BigDecimal
      */
     public function __construct($value)
     {
-        if (is_int($value)) {
-            $this->setValue($value);
-        }
-        elseif (is_string($value) && preg_match('/^[-+]?\\d+([.]\\d+)?$/u', $value)) {
-            $this->setValue($value);
-        }
-        elseif (is_float($value)) {
-            $value = (string) $value;
-            $this->setValue($value);
-        }
-        elseif ($value instanceof \NGS\BigDecimal) {
+        if ($value instanceof \NGS\BigDecimal) {
             $this->setValue($value->value);
-        }
-        else {
-            throw new \InvalidArgumentException('Money could not be constructed from invalid type "'.Utils::getType($value).'"');
+        } else {
+            $this->setValue($value);
         }
     }
 

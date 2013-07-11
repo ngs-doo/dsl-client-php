@@ -28,7 +28,51 @@ class Location
         }
     }
 
-    public function toArray()
+    /**
+     * Constructs array of Locations from array of valid constructor arguments
+     * 
+     * @param array $items
+     * @return array
+     * @throws \InvalidArgumentException
+     */
+    public static function toArray(array $items, $allowNullValues=false)
+    {
+        $results = array();
+        try {
+            foreach ($items as $key => $val) {
+                if ($allowNullValues && $val===null) {
+                    $results[] = null;
+                } elseif ($val === null) {
+                    throw new \InvalidArgumentException('Null value found in provided array');
+                } elseif (!$val instanceof \NGS\Location) {
+                    $results[] = new \NGS\Location($val);
+                } else {
+                    $results[] = $val;
+                }
+            }
+        }
+        catch(\Exception $e) {
+            throw new \InvalidArgumentException('Element at index '.$key.' could not be converted to Location!', 42, $e);
+        }
+        return $results;
+    }
+
+    public static function toArrayList(array $items)
+    {
+        $results = array();
+        foreach ($items as $key => $val) {
+            if ($val === null) {
+                $results[] = null;
+            } elseif (!$val instanceof \NGS\Location) {
+                throw new \InvalidArgumentException('Value was not an instance of NGS\Location');
+            } else {
+                $results[] = $val->asArray();
+            }
+        }
+        return $results;
+    }
+
+    public function asArray()
     {
         return array(
             'X' => $this->x,
@@ -70,6 +114,6 @@ class Location
 
     public function __toString()
     {
-        return json_encode($this->toArray());
+        return json_encode($this->asArray());
     }
 }

@@ -106,10 +106,15 @@ class GenericSearch extends Search
         $this->domainObject = $class;
     }
 
+
+
     public function __call($filter, $params)
     {
-        if (!isset($params[0]) || !isset($params[1])) {
-            throw new \InvalidArgumentException('No params defined for filter '.$filter.'');
+        if (count($params)<2) {
+            throw new \InvalidArgumentException('No value defined for filter '.$filter.'');
+        }
+        if (!isset($params[0])) {
+            throw new \InvalidArgumentException('No property defined for filter '.$filter.'');
         }
         return $this->filter($filter, $params[0], $params[1]);
     }

@@ -40,7 +40,7 @@ class HistoryTest extends \BaseTestCase
     /**
      * @depends testHistory
      */
-    public function testSnapshots(array $snapshots)
+    public function testHistorySnapshots(array $snapshots)
     {
         foreach ($snapshots as $snapshot) {
             $this->assertTrue($snapshot instanceof Snapshot);
@@ -58,7 +58,7 @@ class HistoryTest extends \BaseTestCase
      * @depends testHistory
      * @expectedException InvalidArgumentException
      */
-    public function testSnapShotInvalidGetter(array $snapshots)
+    public function testHistorySnapShotInvalidGetter(array $snapshots)
     {
         $snapshots[0]->not_a_property;
     }

@@ -4,7 +4,7 @@ use Test\Foo;
 use Test\FooGrid;
 use Test\FooCube;
 
-class CubeTest extends \PHPUnit_Framework_TestCase
+class OlapTest extends \PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
