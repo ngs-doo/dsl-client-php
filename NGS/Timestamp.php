@@ -176,7 +176,7 @@ class Timestamp
 
     /**
      * Constructs array of Timestamps from array of valid constructor arguments
-     * 
+     *
      * @param array $items
      * @return array
      * @throws \InvalidArgumentException

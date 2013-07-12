@@ -38,7 +38,7 @@ class ByteStream
 
     /**
      * Factory method accepts base64 encoded string or other ByteStream instance
-     * 
+     *
      * @return \NGS\ByteStream
      */
     public static function fromBase64($value)
@@ -60,7 +60,7 @@ class ByteStream
 
     /**
      * Factory method accepts raw string or other ByteStream instance
-     * 
+     *
      * @return \NGS\ByteStream
      */
     public static function fromBinary($value)
@@ -164,7 +164,7 @@ class ByteStream
 
     /**
      * Gets raw value
-     * 
+     *
      * @return string Bytestream value
      */
     public function getValue()

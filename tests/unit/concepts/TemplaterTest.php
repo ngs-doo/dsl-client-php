@@ -108,7 +108,7 @@ class TemplaterTest extends \BaseTestCase
         $cube = new \Test\FooCube();
         $spec = new \Test\FooCube\findByBar();
         $spec->query = 'a';
-        
+
         $content = $cube->createXml($dimensions, $facts, array(), $spec);
 
         $expected = '<foo><bar>a</bar><num>1</num></foo>';

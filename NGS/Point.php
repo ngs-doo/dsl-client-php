@@ -26,7 +26,7 @@ class Point extends Location
 
     /**
      * Constructs array of Points from array of valid constructor arguments
-     * 
+     *
      * @param array $items
      * @return array
      * @throws \InvalidArgumentException

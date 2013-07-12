@@ -89,7 +89,7 @@ class ApplicationProxy
     /**
      * Execute server command via POST request
      * Use when sending data already encoded in JSON
-     * 
+     *
      * @param  string $command
      * @param  string $data         JSON encoded data
      * @param  array  $expectedCode

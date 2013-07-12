@@ -186,7 +186,7 @@ class StandardProxy
 
     /**
      * Execute custom server service
-     * 
+     *
      * @return mixed
      */
     public function execute(

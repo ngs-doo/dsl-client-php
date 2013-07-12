@@ -9,7 +9,7 @@ module Store
         timestamp ModifiedAt { versioning; }
         detail Packages Package.Product;
     }
-    
+
     snowflake ProductList Product
     {
         Name;

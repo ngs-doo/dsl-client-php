@@ -32,7 +32,7 @@ class FailLogListener implements PHPUnit_Framework_TestListener
     {
         $this->logFail($test);
     }
- 
+
     public function addFailure(PHPUnit_Framework_Test $test, PHPUnit_Framework_AssertionFailedError $e, $time)
     {
         $this->logFail($test);
@@ -42,14 +42,14 @@ class FailLogListener implements PHPUnit_Framework_TestListener
     {
         $this->httpBuffer = '';
     }
- 
+
     public function addIncompleteTest(PHPUnit_Framework_Test $test, Exception $e, $time) {}
- 
+
     public function addSkippedTest(PHPUnit_Framework_Test $test, Exception $e, $time) {}
- 
+
     public function endTest(PHPUnit_Framework_Test $test, $time) {}
- 
+
     public function startTestSuite(PHPUnit_Framework_TestSuite $suite) {}
- 
+
     public function endTestSuite(PHPUnit_Framework_TestSuite $suite) {}
 }

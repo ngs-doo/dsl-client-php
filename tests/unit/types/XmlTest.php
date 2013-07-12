@@ -166,7 +166,7 @@ class XmlTest extends PHPUnit_Framework_TestCase
         $dom->formatOutput = false;
         $dom->loadXML($xml->asXML());
         $xmlNoWhitespace = $dom->saveXML();
-        
+
         $this->assertSame($xmlNoWhitespace, $xmlFromArray->asXML());
     }
 }

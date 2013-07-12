@@ -75,7 +75,7 @@ class TimestampTest extends PHPUnit_Framework_TestCase
         // comparing for equality...
         // $this->assertEquals($dt, $ts->toDateTime());
         // ...results in known bug https://bugs.php.net/bug.php?id=60873
-        // 
+        //
         // --- Expected
         // +++ Actual
         // @@ @@
@@ -85,7 +85,7 @@ class TimestampTest extends PHPUnit_Framework_TestCase
         // -    'timezone' => '+00:00'
         // +    'timezone_type' => 3
         // +    'timezone' => 'UTC'
-        
+
         // ...rather compare string representation
         $zone = new \DateTimeZone('UTC');
         $format = 'Y-m-d h:i:s.u P';

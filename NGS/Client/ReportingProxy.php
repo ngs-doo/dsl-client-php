@@ -37,7 +37,7 @@ class ReportingProxy
 
     /**
      * Gets singleton instance of Reporting.svc proxy
-     * 
+     *
      * @return ReportingProxy
      */
     public static function instance()
@@ -68,7 +68,7 @@ class ReportingProxy
 
     /**
      * Creates report using Templater
-     * 
+     *
      * @param  mixed  $report    Report instance
      * @param  string $templater Templater name
      * @return string            Report contents
@@ -87,7 +87,7 @@ class ReportingProxy
 
     /**
      * Create report with Templater using OLAP with specification as data source
-     * 
+     *
      * @param  \NGS\Patterns\OlapCube      $cube
      * @param  \NGS\Patterns\Specification $specification
      * @param  string                      $templater
@@ -149,7 +149,7 @@ class ReportingProxy
 
     /**
      * Gets all history entries for an identifiable object
-     * 
+     *
      * @param  string $class Object class name
      * @param  string $uri   Object URI
      * @return array         List of history entries
@@ -213,10 +213,10 @@ class ReportingProxy
 
     /**
      * Populates template with identifiable object
-     * 
+     *
      * @param  string $file  Template file to populate
      * @param  string $class Object class
-     * @param  string $uri   Object URI 
+     * @param  string $uri   Object URI
      * @return string        Populated template contents
      */
     public function findTemplater(
@@ -237,7 +237,7 @@ class ReportingProxy
 
     /**
      * Populates template using specification search results
-     * 
+     *
      * @param  string $file  Template file to populate
      * @param  string \NGS\Patterns\Specification Specification to be searched
      * @return string        Populated template contents
@@ -259,7 +259,7 @@ class ReportingProxy
 
     /**
      * Populates template using generic search results
-     * 
+     *
      * @param  string $file  Template file to populate
      * @param  string \NGS\Patterns\GenericSearch
      * @return string        Populated template contents

@@ -61,7 +61,7 @@ class AggregateEventTest extends \PHPUnit_Framework_TestCase
     public function testDomainProxySubmit()
     {
         $this->markTestSkipped('cannot run aggregate domain events due to lack of server-side permissions');
-        
+
         $event = new AddNum();
         $event->amount = 20;
         $proxy = DomainProxy::instance();

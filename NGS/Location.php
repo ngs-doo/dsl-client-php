@@ -30,7 +30,7 @@ class Location
 
     /**
      * Constructs array of Locations from array of valid constructor arguments
-     * 
+     *
      * @param array $items
      * @return array
      * @throws \InvalidArgumentException

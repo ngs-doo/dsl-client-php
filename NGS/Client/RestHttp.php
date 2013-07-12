@@ -270,7 +270,7 @@ class RestHttp
      *     }
      * });
      * </code>
-     * 
+     *
      * @param callable $subscriber
      * @throws \InvalidArgumentException
      */
@@ -284,7 +284,7 @@ class RestHttp
 
     /**
      * Dispatches event to all subscribed listeners
-     * 
+     *
      * @param       $event
      * @param array $context
      */

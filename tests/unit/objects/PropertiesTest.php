@@ -125,7 +125,7 @@ class PropertiesTest extends PHPUnit_Framework_TestCase
         // simple property, non-null
         $obj->null_prop = null;
         $this->$assertion(null, $obj->null_prop);
-        
+
 
         // array property, non-null
         $obj->prop_arr = $values;

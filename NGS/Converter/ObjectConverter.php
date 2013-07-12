@@ -18,7 +18,7 @@ class ObjectConverter implements ConverterInterface
 
     /**
      * Serializes object or object array to JSON
-     * 
+     *
      * @param object|array Object or object array
      * @return string JSON encoded string
      */
@@ -52,7 +52,7 @@ class ObjectConverter implements ConverterInterface
 
     /**
      * Converts JSON to object
-     * 
+     *
      * @param  string $json
      * @return mixed Object instance
      */
@@ -64,7 +64,7 @@ class ObjectConverter implements ConverterInterface
 
     /**
      * Determines appropriate converter class for given object
-     * 
+     *
      * @param object $object
      * @param string $type Converter type; one of 'Json' or 'Array'
      * @return \NGS\Converter\ConverterInterface

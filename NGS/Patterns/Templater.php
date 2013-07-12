@@ -36,7 +36,7 @@ class Templater
 
     /**
      * Fills template with domain object
-     * 
+     *
      * @param string $uri
      * @return string Binary content of genarated template
      * @throws InvalidArgumentException If data source was invalid type
@@ -49,8 +49,8 @@ class Templater
 
     /**
      * Fills template with data returned from specification or generic search
-     * 
-     * @param \NGS\Patterns\Specification|\NGS\Patterns\GenericSearch $source 
+     *
+     * @param \NGS\Patterns\Specification|\NGS\Patterns\GenericSearch $source
      * data source
      * @return string Binary content of genarated template
      * @throws InvalidArgumentException If data source was invalid type
