@@ -1,7 +1,9 @@
 <?php
 namespace NGS\Client;
 
-// simple http client using curl
+/**
+ * Request object used by {@see NGS\Client\RestHttp}
+ */
 class HttpRequest
 {
     private $uri;

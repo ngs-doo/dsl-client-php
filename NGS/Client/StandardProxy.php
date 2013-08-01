@@ -14,9 +14,9 @@ use NGS\Patterns\Repository;
 use NGS\Utils;
 
 /**
- * Proxy for executing bulk persist, OLAP, and custom server commands
- *
- * @package NGS\Client
+ * Proxy service to various domain operations such as bulk persistence,
+ * data analysis, and remote service calls counting and event sourcing.
+ * It is preferred to use domain patterns instead of this proxy service.
  */
 class StandardProxy
 {
@@ -51,7 +51,7 @@ class StandardProxy
     }
 
     /**
-     * Insert multiple aggregates with single command/request
+     * Insert multiple aggregates with single request to the remote server
      *
      * @param array $aggregates Array of \NGS\Patterns\AggregateRoot instances
      * @return array|mixed
@@ -140,6 +140,7 @@ class StandardProxy
 
     /**
      * Perform OLAP analysis on a cube using specification
+     *
      * @return array Results
      */
     public function olapCubeWithSpecification(

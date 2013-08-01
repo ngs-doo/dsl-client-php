@@ -17,8 +17,9 @@ use NGS\Patterns\Repository;
 use NGS\Patterns\Specification;
 
 /**
- * Proxy for executing domain commands, such as searching and counting domain
- * objects and submitting events
+ * Proxy service to remote REST-like API for basic domain operations
+ * such as searching, counting and event sourcing.
+ * It is preferred to use domain patterns instead of this proxy service.
  */
 class DomainProxy
 {
@@ -58,7 +59,8 @@ class DomainProxy
     }
 
     /**
-     * Find domain objects by their URIs
+     * Returns an array of domain objects uniquely represented with their URIs.
+     * Only found objects will be returned (array is empty if no objects are found).
      *
      * Example:<br>
      * <code>
@@ -84,7 +86,8 @@ class DomainProxy
     }
 
     /**
-     * Search domain objects by type (class)
+     * Returns an array of all domain objects
+     * with up to $limit results.
      *
      * Example:<br>
      * <code>
@@ -117,7 +120,8 @@ class DomainProxy
     }
 
     /**
-     * Search domain objects by using specification
+     * Returns a list of domain objects satisfying {@see NGS\Patterns\Specification}
+     * with up to $limit results.
      *
      * @param string        $class
      * @param Specification $specification Specification instance used for searching
@@ -149,7 +153,7 @@ class DomainProxy
     }
 
     /**
-     * Search domain objects by using generic search
+     * Returns a list of domain objects satisfying conditions in {@see NGS\Patterns\GenericSearch}
      *
      * @param string|IDomainObject $class
      * @param array $filters
@@ -177,7 +181,7 @@ class DomainProxy
     }
 
     /**
-     * Count domain objects using generic search
+     * Count total number of domain objects satisfying conditions in {@see NGS\Patterns\GenericSearch}
      *
      * @param type $class
      * @param array $filters
@@ -198,7 +202,7 @@ class DomainProxy
     }
 
     /**
-     * Count total domain objects of given type (class)
+     * Returns a total number of domain objects.
      *
      * @param string $class
      * @return integer Total number of objects
@@ -216,7 +220,7 @@ class DomainProxy
     }
 
     /**
-     * Count domain objects using specification
+     * Count number of domain objects satisfying {@see NGS\Patterns\Specification}
      *
      * @param Specification $specification
      * @return int Total number of objects
@@ -236,7 +240,8 @@ class DomainProxy
     }
 
     /**
-     * Submit event
+     * Send domain event to the server. Server will return identity under which it was stored.
+     * Events can't be modified once they are submitted. Only new events can be created.
      *
      * @param DomainEvent $event Event to be executed
      * @return string Event URI
@@ -255,7 +260,8 @@ class DomainProxy
     }
 
     /**
-     * Apply aggregate event on a single aggregate root
+     * Apply domain event to a single aggregate. Server will return modified aggregate root.
+     * Events can't be modified once they are submitted. Only new events can be created.
      *
      * @param AggregateDomainEvent $event
      * @param string $uri URI of aggregate root

@@ -13,8 +13,9 @@ use NGS\Patterns\Specification;
 use NGS\Patterns\GenericSearch;
 
 /**
- * Proxy for executing reporting commands: creating and populating reports,
- * OLAP reports, searching command history
+ * Proxy service to reporting operations such as document generation,
+ * report population and history lookup.
+ * Report should be used to minimize calls to server.
  */
 class ReportingProxy
 {
@@ -48,7 +49,8 @@ class ReportingProxy
     }
 
     /**
-     * Populates report with data
+     * Populate report. Send message to server with serialized report specification.
+     * @todo: API change, Report/Result
      *
      * @param $report
      * @return mixed
@@ -67,7 +69,8 @@ class ReportingProxy
     }
 
     /**
-     * Creates report using Templater
+     * Create document from report. Send message to server with serialized report specification.
+     * Server will return template populated with found data.
      *
      * @param  mixed  $report    Report instance
      * @param  string $templater Templater name
@@ -86,7 +89,10 @@ class ReportingProxy
     }
 
     /**
-     * Create report with Templater using OLAP with specification as data source
+     * Perform data analysis on specified data source.
+     * Data source is filtered using provided specification.
+     * Analysis is performed by grouping data by dimensions
+     * and aggregating information using specified facts.
      *
      * @param  \NGS\Patterns\OlapCube      $cube
      * @param  \NGS\Patterns\Specification $specification
@@ -120,7 +126,9 @@ class ReportingProxy
     }
 
     /**
-     * Create report with Templater using OLAP as data source
+     * Perform data analysis on specified data source.
+     * Analysis is performed by grouping data by dimensions
+     * and aggregating information using specified facts.
      *
      * @param \NGS\Patterns\OlapCube $cube
      * @param  string                      $templater
@@ -148,7 +156,8 @@ class ReportingProxy
     }
 
     /**
-     * Gets all history entries for an identifiable object
+     * Get aggregate root history.
+     * History is collection of snapshots made at state changes.
      *
      * @param  string $class Object class name
      * @param  string $uri   Object URI
@@ -212,7 +221,8 @@ class ReportingProxy
     }
 
     /**
-     * Populates template with identifiable object
+     * Populate template using found domain object.
+     * Optionally convert document to pdf.
      *
      * @param  string $file  Template file to populate
      * @param  string $class Object class
@@ -236,10 +246,12 @@ class ReportingProxy
     }
 
     /**
-     * Populates template using specification search results
+     * Populate template using domain objects which satisfy
+     * {@ses NGS\Patterns\Specification}.
+     * Optionally convert document to pdf.
      *
      * @param  string $file  Template file to populate
-     * @param  string \NGS\Patterns\Specification Specification to be searched
+     * @param  \NGS\Patterns\Specification Specification to be searched
      * @return string        Populated template contents
      */
     public function searchTemplater(
@@ -258,7 +270,8 @@ class ReportingProxy
     }
 
     /**
-     * Populates template using generic search results
+     * Populate template using domain objects which satisfy
+     * {@ses NGS\Patterns\GenericSearch}.
      *
      * @param  string $file  Template file to populate
      * @param  string \NGS\Patterns\GenericSearch

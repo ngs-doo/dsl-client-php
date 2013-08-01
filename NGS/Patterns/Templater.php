@@ -8,6 +8,16 @@ use NGS\Patterns\GenericSearch;
 use NGS\Patterns\Specification;
 use NGS\Utils;
 
+/**
+ * Service for creating documents based on templates and data.
+ * Data can be provided or specification can be sent so data is queried
+ * on the server.
+ * <p>
+ * Byte array is returned from the server which represents docx, xlsx,
+ * text or converted pdf file.
+ * <p>
+ * More info about Templater library can be found at {@link http://templater.info}
+ */
 class Templater
 {
     private $class;

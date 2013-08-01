@@ -25,7 +25,9 @@ use NGS\Converter\PrimitiveConverter;
 use NGS\Converter\ObjectConverter;
 
 /**
- * Simple HTTP client
+ * HTTP client used communication with platform
+ * Should not be used directly, instead use domain patterns
+ * Requests can be monitored via {@see addSubscriber}
  */
 class RestHttp
 {

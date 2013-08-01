@@ -9,7 +9,9 @@ use NGS\Utils;
 use NGS\Name;
 
 /**
- * Proxy for executing server commands
+ * Proxy service to remote RPC-like API
+ *
+ * Remote services can be called using their name
  *
  * @package NGS\Client
  */
@@ -45,7 +47,7 @@ class ApplicationProxy
     }
 
     /**
-     * Execute server command via GET request
+     * If remote service doesn't require any arguments it can be called using get method.
      *
      * @param        $command
      * @param array  $expectedCode
@@ -64,12 +66,13 @@ class ApplicationProxy
     }
 
     /**
-     * Execute server command via POST request
+     * When remote service requires an argument, message with serialized payload will be sent.
      *
      * @param string $command
      * @param array  $data
      * @param array  $expectedCode
      * @param string $accept
+     * @return mixed
      */
     public function post(
         $command,
@@ -87,8 +90,7 @@ class ApplicationProxy
     }
 
     /**
-     * Execute server command via POST request
-     * Use when sending data already encoded in JSON
+     * As {@see post}, when arguments are already serialized in JSON
      *
      * @param  string $command
      * @param  string $data         JSON encoded data

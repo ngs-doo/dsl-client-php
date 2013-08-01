@@ -12,9 +12,13 @@ use NGS\Patterns\Repository;
 use NGS\Utils;
 
 /**
- * Proxy used for executing CRUD commands.
+ * Proxy service to remote CRUD REST-like API.
+ * Single aggregate root instance can be used.
+ * New object instance will be returned when doing modifications.
  * All commands are performed on a single aggregate root.
- * Use StandardProxy for bulk versions  of create/update/delete.
+ * Use {@see StandardProxy} when response is not required, or for bulk
+ * versions of CRUD commands.
+ * It is preferred to use domain patterns instead of this proxy service.
  *
  * @package NGS\Client
  */
@@ -50,7 +54,9 @@ class CrudProxy
     }
 
     /**
-     * Create (insert) a single aggregate root
+     * Create (insert) a single aggregate root on the remote server.
+     *  Created object will be returned with its identity
+     * and all calculated properties evaluated.
      *
      * @param AggregateRoot $aggregate
      * @return AggregateRoot Persisted aggregate root
@@ -69,7 +75,8 @@ class CrudProxy
     }
 
     /**
-     * Update a single aggregate root
+     * Modify existing aggregate root on the remote server.
+     * Aggregate root will be saved and all calculated properties evaluated.
      *
      * @param AggregateRoot $aggregate
      * @return AggregateRoot Persisted aggregate root
@@ -89,7 +96,9 @@ class CrudProxy
     }
 
     /**
-     * Delete a single aggregate root using URI as identifier
+     * Delete existing aggregate root from the remote server.
+     * If possible, aggregate root will be deleted and it's instance
+     * will be provided.
      *
      * @param string $class
      * @param string $uri
@@ -109,7 +118,8 @@ class CrudProxy
     }
 
     /**
-     * Read (fetch) a single aggregate root using URI as identifier
+     * Get domain object from remote server using provided identity.
+     * If domain object is not found an exception will be thrown.
      *
      * @param string $class
      * @param string $uri
