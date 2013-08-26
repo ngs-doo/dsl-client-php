@@ -29,10 +29,15 @@ You can test single components by specifying their name:
 
 All unit tests are located in the tests/unit folder.
 
+##
+
+apigen --source NGS/ --destination ../docs/NGS22
+
 ## Documentation
 
-List of PHP documentation resources:
+List of documentation resources:
 
+- [API docs][9]
 - [Try it online][8]
 - [Introduction][2]
 - [Setup guide][3]
@@ -40,6 +45,10 @@ List of PHP documentation resources:
 - [Intermediate tutorial][5]
 - [Advanced tutorial][6]
 - [Example usage of DSL platform inside a Laravel app][7]
+
+API documentation is created using [apigen](http://apigen.org).
+
+    $ apigen --source NGS/ --destination path
 
 [1]: https://dsl-platform.com
 [2]: https://docs.dsl-platform.com/php-introduction
@@ -49,3 +58,4 @@ List of PHP documentation resources:
 [6]: https://docs.dsl-platform.com/php-advanced-tutorial
 [7]: https://github.com/nutrija/dsl-php-tutorial/blob/master/README-short.md
 [8]: https://learn.dsl-platform.com
+[9]: https://docs.dsl-platform.com/phpdoc/
