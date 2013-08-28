@@ -135,8 +135,6 @@ class RestHttp
         $options = array();
         if (isset($this->certPath)) {
             $options[CURLOPT_CAINFO] = $this->certPath;
-        } else if (class_exists('\NGS\Dirs') && file_exists(\NGS\Dirs::$platform . '/startssl-ca.pem')) {
-            $options[CURLOPT_CAINFO] = \NGS\Dirs::$platform . '/startssl-ca.pem';
         }
 
         $request = new HttpRequest($this->service.$uriSegment, $method, null, null, $options);
