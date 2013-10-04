@@ -161,9 +161,9 @@ class RestHttp
 
         $response = $request->send();
 
-        $responseHeaders = $request->getResponseHeaders();
+        $responseInfo = $request->getResponseInfo();
         $this->lastResponse = array(
-            'info' => $responseHeaders,
+            'info' => $responseInfo,
             'body' => $response
         );
 

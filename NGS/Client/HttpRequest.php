@@ -12,6 +12,14 @@ class HttpRequest
     private $options;
     private $responseInfo;
     private $responseHeaders;
+    private $responseBody;
+    private $responseTime;
+
+    private function miliseconds()
+    {
+        $time = gettimeofday();
+        return $time['sec']*1000 + (int) ($time['usec'] / 1000);
+    }
 
     public function __construct($uri, $method = null, $body = null, $headers = null, $options = null)
     {
@@ -21,6 +29,7 @@ class HttpRequest
         $this->options = array(
             CURLOPT_RETURNTRANSFER  => true,
             CURLINFO_HEADER_OUT     => true,
+            CURLOPT_HEADER          => true
         );
 
         if (is_array($options)) {
@@ -72,10 +81,20 @@ class HttpRequest
     {
         curl_setopt_array($this->curl, $this->options);
 
+        $time = $this->miliseconds();
         $response = curl_exec($this->curl);
+        $this->responseTime = $this->miliseconds() - $time;
+
         $this->responseInfo = curl_getinfo($this->curl);
 
-        return $response;
+        $headerSize = $this->responseInfo['header_size'];
+
+        $this->responseHeaders = explode("\r\n", substr($response, 0, $headerSize));
+        array_splice($this->responseHeaders, -2);
+
+        $this->responseBody = substr($response, $headerSize);
+
+        return $this->responseBody;
     }
 
     public function getResponseInfo()
@@ -85,7 +104,7 @@ class HttpRequest
 
     public function getResponseHeaders()
     {
-        return $this->getResponseInfo();
+        return $this->responseHeaders;
     }
 
     public function getResponseCode()
@@ -96,6 +115,11 @@ class HttpRequest
     public function getResponseContentType()
     {
         return isset($this->responseInfo['content_type']) ? $this->responseInfo['content_type'] : null;
+    }
+
+    public function getResponseTime()
+    {
+        return $this->responseTime;
     }
 
     public function getError()
@@ -111,5 +135,49 @@ class HttpRequest
         return strtoupper($this->method).' '.$this->uri."\n"
             .implode("\n", $headers)."\n"
             .$body;
+    }
+
+    public function logRequest($logger)
+    {
+        $headers = $this->options[CURLOPT_HTTPHEADER];
+        $body = $this->options[CURLOPT_POSTFIELDS];
+        $url = $this->method.' '.$this->uri;
+
+        $logger->debug(
+            'Sending HTTP Request:
+{method} {uri}
+{headers}
+{body}',
+            array(
+                'method' => $this->method,
+                'uri' => $this->uri,
+                'headers' => implode(PHP_EOL, $headers),
+                'body' => $body,
+            )
+        );
+    }
+
+    public function logResponse($logger)
+    {
+        $headers = $this->getResponseHeaders();
+        $time = $this->getResponseTime();
+        $body = $this->responseBody;
+
+        $logger->info('{method} {uri}, {status}, {size} bytes, {time} ms', array(
+            'method' => $this->method,
+            'uri' => $this->uri,
+            'status' => $headers[0],
+            'size' => strlen($body),
+            'time' => $time
+        ));
+        $logger->debug(
+            'Received HTTP Response:
+{headers}
+{body}',
+            array(
+                'headers' => implode(PHP_EOL, $headers),
+                'body' => $body
+            )
+       );
     }
 }
