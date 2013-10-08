@@ -269,11 +269,9 @@ abstract class PrimitiveConverter
     {
         try {
             foreach ($items as $key => &$val) {
-                if($val === null) {
-                    throw new InvalidArgumentException('Null value found in provided array');
+                if($val !== null) {
+                    $val = self::toString($val);
                 }
-
-                $val = self::toString($val);
             }
         }
         catch(\Exception $e) {
