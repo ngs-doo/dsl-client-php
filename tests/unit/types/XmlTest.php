@@ -169,4 +169,27 @@ class XmlTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame($xmlNoWhitespace, $xmlFromArray->asXML());
     }
+    public function testExampleFiles()
+    {
+        $xmlFile = $this->getFile('ms-books.xml');
+        
+        $xml = file_get_contents($xmlFile);
+        
+        $item = new Test\Elem();
+        $item->data = $xml;
+        
+        $xmlObj = $item->data;
+        $this->assertSame($xml, $xmlObj->asXML());
+        
+        $item->persist();
+        
+        $fetched = Test\Elem::find($item->URI);
+        $xmlDb = $fetched->data;
+        
+        $this->assertEquals($xmlObj->catalog->asXML(), $xmlDb->catalog->asXML());
+        
+        // $this->assertSame($xmlObj->asXML(), $xmlDb->asXML());
+        
+        $item->delete();
+    }
 }
