@@ -61,14 +61,20 @@ abstract class XmlConverter
         return $result;
     }
 
-    private static function build_xml(array $arr) {
+    private static function build_xml(array $arr)
+    {
         $keys = array_keys($arr);
         $name = $keys[0];
         $root = $arr[$name];
 
-        $text = is_array($root) && array_key_exists('#text', $root)
-            ? $root['#text']
-            : '';
+        if (is_array($root) && array_key_exists('#text', $root)) {
+            $text = $root['#text'];
+        } else if (is_string($root)) {
+            $text = $root;
+        } else {
+            $text = '';
+        }
+        
         $str = '<'.$name.'>'.$text.'</'.$name.'>';
         $xml = new \SimpleXmlElement($str);
 
@@ -78,37 +84,48 @@ abstract class XmlConverter
         return $xml;
     }
 
-    private static function array_to_xml(array $arr, &$xml) {
+    private static function array_to_xml(array $arr, &$xml)
+    {
         foreach($arr as $key => $value) {
             if(strpos($key, '@', 0) === 0) {
                 $xml->addAttribute(substr($key, 1), $value);
-            }
-            else if(is_array($value)) {
+            } else if(is_array($value)) {
                 $child_has_only_numeric_keys = true;
                 $i = 0;
                 foreach($value as $k=>$v)
                     if($k!==$i++)
                         $child_has_only_numeric_keys = false;
 
+                // addChild does not escape ampersands and left angle bracket
+                // this is specified behaviour
+                // @see https://bugs.php.net/bug.php?id=45253
                 if($child_has_only_numeric_keys) {
                     foreach($value as $k=>$v) {
-                        $subnode = array_key_exists('#text', $v)
-                            ? $xml->addChild("$key", $v['#text'])
-                            : $xml->addChild("$key");
-                        self::array_to_xml($v, $subnode);
+                        $subnode = null;
+                        if (is_array($v)) {
+                            if (array_key_exists('#text', $v)) {
+                                $subnode = $xml->addChild("$key", str_replace(array('&', '<'), array('&amp;', '&lt;'), $v['#text']));
+                            } else {
+                                $subnode = $xml->addChild("$key");
+                            }
+                            if ($subnode!==null) {
+                                self::array_to_xml($v, $subnode);
+                            }
+                        } else if (is_string($v)) {
+                            $xml->addChild("$key", str_replace(array('&', '<'), array('&amp;', '&lt;'), $v));
+                        } else {
+                            $xml->addChild("$key");
+                        }
                     }
-                }
-                else if(!is_numeric($key)) {
+                } else if(!is_numeric($key)) {
                     $subnode = array_key_exists('#text', $value)
-                        ? $xml->addChild("$key", $value['#text'])
+                        ? $xml->addChild("$key", str_replace(array('&', '<'), array('&amp;', '&lt;'), $value['#text']))
                         : $xml->addChild("$key");
                     self::array_to_xml($value, $subnode);
-                }
-                else {
+                } else {
                     self::array_to_xml($value, $xml);
                 }
-            }
-            else if($key !== '#text')
+            } else if($key !== '#text')
                 $xml->$key = "$value";
         }
     }

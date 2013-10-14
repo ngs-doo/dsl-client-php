@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<root attr="a&amp;&lt;a&gt;" attr2="&amp;&lt;">
+  <elem>&gt;a&amp;&lt;a&gt;b</elem>
+  <elems>
+    <el/>
+    <el>&gt;a&amp;&lt;a</el>
+    <el attr="&amp;&lt;" attr2="a&amp;&lt;a">&amp;&lt;</el>
+  </elems>
+  <e>
+    <e/>
+  </e>
+  <el>
+    <el>
+      <el>1</el>
+    </el>
+  </el>
+  <el2>
+    <el>
+      <el>1</el>
+    </el>
+  </el2>
+  <garbage>&amp;&#x161;&#x111;&amp;&#x10D;&#x107;&#x17E;&#x160;&#x110;&#x10C;&#x106;&#x17D;&amp;!"#$%/()=?*~&#xAC;&amp;</garbage>
+  <lowerUPPERcase/>
+</root>

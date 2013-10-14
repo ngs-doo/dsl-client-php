@@ -177,4 +177,9 @@ module Test
     {
         string recompile;
     }
+
+    root Elem
+    {
+        xml data;
+    }
 }
