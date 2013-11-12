@@ -1,4 +1,7 @@
 <?php
+
+// runs tests using dsl-client-php downloaded from dsl-platform.com
+
 $bootstrapPath = __DIR__.'/platform/Bootstrap.php';
 if(!is_file($bootstrapPath))
     die("Error: platform bootstrap file not found in: ".$bootstrapPath."\n".
