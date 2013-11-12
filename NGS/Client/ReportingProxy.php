@@ -108,14 +108,16 @@ class ReportingProxy
         $templater,
         array $dimensions,
         array $facts,
-        array $order = array())
+        array $order = array(),
+        $limit = null,
+        $offset = null)
     {
         $cube = Name::full($cube);
         $name = Name::base($specification);
         $fullName = Name::full($specification);
         if(strncmp($fullName, $cube, strlen($cube)) != 0)
             $name = substr($fullName, 0, strlen($fullName) - strlen($name) - 1).'+'.$name;
-        $arguments = QueryString::prepareCubeCall($dimensions, $facts, $order);
+        $arguments = QueryString::prepareCubeCall($dimensions, $facts, $order, $limit, $offset);
         return
             $this->http->sendRequest(
                 self::REPORTING_URI.'/olap/'.rawurlencode($cube).'/'.rawurlencode($templater).'?specification='.rawurlencode($name).'&'.$arguments,
@@ -142,10 +144,13 @@ class ReportingProxy
         $templater,
         array $dimensions,
         array $facts,
-        array $order = array())
+        array $order = array(),
+        $limit = null,
+        $offset = null)
     {
         $cube = Name::full($cube);
-        $arguments = QueryString::prepareCubeCall($dimensions, $facts, $order);
+        $arguments = QueryString::prepareCubeCall($dimensions, $facts, $order, $limit, $offset);
+        
         return
             $this->http->sendRequest(
                 self::REPORTING_URI.'/olap/'.rawurlencode($cube).'/'.rawurlencode($templater).'?'.$arguments,

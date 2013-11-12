@@ -148,14 +148,16 @@ class StandardProxy
         $specification,
         array $dimensions,
         array $facts,
-        array $order = array())
+        array $order = array(),
+        $limit = null,
+        $offset = null)
     {
         $cube = Name::full($cube);
         $name = Name::base($specification);
         $fullName = Name::full($specification);
         if(strncmp($fullName, $cube, strlen($cube)) != 0)
             $name = substr($fullName, 0, strlen($fullName) - strlen($name) - 1).'+'.$name;
-        $arguments = QueryString::prepareCubeCall($dimensions, $facts, $order);
+        $arguments = QueryString::prepareCubeCall($dimensions, $facts, $order, $limit, $offset);
         $response =
             $this->http->sendRequest(
                 self::STANDARD_URI.'/olap/'.rawurlencode($cube).'?specification='.rawurlencode($name).'&'.$arguments,
@@ -172,10 +174,12 @@ class StandardProxy
         $cube,
         array $dimensions,
         array $facts,
-        array $order = array())
+        array $order = array(),
+        $limit = null,
+        $offset = null)
     {
         $cube = Name::full($cube);
-        $arguments = QueryString::prepareCubeCall($dimensions, $facts, $order);
+        $arguments = QueryString::prepareCubeCall($dimensions, $facts, $order, $limit, $offset);
         $response =
             $this->http->sendRequest(
                 self::STANDARD_URI.'/olap/'.rawurlencode($cube).'?'.$arguments,

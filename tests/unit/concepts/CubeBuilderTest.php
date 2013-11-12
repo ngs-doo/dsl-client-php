@@ -64,6 +64,13 @@ class CubeBuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(3, count($rows));
         $this->assertSame($expectedRows, $rows);
 
+        // with limit and offset
+        $builder->limit(1)->offset(1);
+        $rows2 = $builder->analyze();
+        
+        $this->assertSame(1, count($rows2));
+        $this->assertSame(array($expectedRows[1]), $rows2); 
+        
         $this->tearDownPersist();
     }
 
