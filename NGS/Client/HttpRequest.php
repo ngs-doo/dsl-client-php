@@ -140,7 +140,7 @@ class HttpRequest
     public function logRequest($logger)
     {
         $headers = $this->options[CURLOPT_HTTPHEADER];
-        $body = $this->options[CURLOPT_POSTFIELDS];
+        $body = isset($this->options[CURLOPT_POSTFIELDS]) ? $this->options[CURLOPT_POSTFIELDS] : '';
         $url = $this->method.' '.$this->uri;
 
         $logger->debug(
