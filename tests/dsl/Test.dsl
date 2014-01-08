@@ -173,13 +173,13 @@ module Test
         map map;
     }
 
-    value please
-    {
-        string recompile;
-    }
-
     root Elem
     {
         xml data;
+    }
+
+    root recompileMePlease
+    {
+        string v1;
     }
 }

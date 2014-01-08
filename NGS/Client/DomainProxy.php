@@ -75,12 +75,12 @@ class DomainProxy
     public function find($class, array $uris)
     {
         $name = Name::full($class);
-        $body = array('Name' => $name, 'Uri' => PrimitiveConverter::toStringArray($uris));
+        $body = json_encode(PrimitiveConverter::toStringArray($uris));
         $response =
             $this->http->sendRequest(
-                ApplicationProxy::APPLICATION_URI.'/GetDomainObject',
-                'POST',
-                json_encode($body),
+                self::DOMAIN_URI.'/find/'.rawurlencode($name),
+                'PUT',
+                $body,
                 array(200));
         return RestHttp::parseResult($response, $class);
     }

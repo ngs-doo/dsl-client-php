@@ -171,8 +171,8 @@ class ReportingProxy
     public function getHistory($class, $uri)
     {
         return is_array($uri)
-            ? $this->getCommandHistory($class, $uri)
-            : $this->getRestHistory($class, $uri);
+            ? $this->getMultipleHistory($class, $uri)
+            : $this->getSingleHistory($class, $uri);
     }
 
     private static function parseHistoryResponse($response, $class)
@@ -199,20 +199,20 @@ class ReportingProxy
         return $result;
     }
 
-    private function getCommandHistory($class, $uris)
+    private function getMultipleHistory($class, $uris)
     {
         $name = Name::full($class);
-        $body = array('Name' => $name, 'Uri' => PrimitiveConverter::toStringArray($uris));
+        $body = json_encode(PrimitiveConverter::toStringArray($uris));
         $response =
             $this->http->sendRequest(
-                ApplicationProxy::APPLICATION_URI.'/GetRootHistory',
-                'POST',
-                json_encode($body),
+                self::REPORTING_URI.'/history/'.rawurlencode($name),
+                'PUT',
+                $body,
                 array(200));
         return self::parseHistoryResponse($response, $class);
     }
 
-    private function getRestHistory($class, $uri)
+    private function getSingleHistory($class, $uri)
     {
         $name = Name::full($class);
         $response =
