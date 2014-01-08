@@ -56,8 +56,8 @@ require_once __DIR__.'/Patterns/Templater.php';
 require_once __DIR__.'/Patterns/OlapCube.php';
 require_once __DIR__.'/Patterns/CubeBuilder.php';
 
-require_once __DIR__.'/PSR3/Psr/log/LogLevel.php';
-require_once __DIR__.'/PSR3/Psr/log/LoggerInterface.php';
-require_once __DIR__.'/PSR3/Psr/log/AbstractLogger.php';
+require_once __DIR__.'/PSR3/Psr/Log/LogLevel.php';
+require_once __DIR__.'/PSR3/Psr/Log/LoggerInterface.php';
+require_once __DIR__.'/PSR3/Psr/Log/AbstractLogger.php';
 require_once __DIR__.'/Logger/AbstractLoggerHelper.php';
 require_once __DIR__.'/Logger/PsrLoggerBridge.php';
