@@ -4,8 +4,20 @@
          bootstrap="tests/bootstrap.php.dist"
 >
     <testsuites>
-        <testsuite name="NGS test suite">
-            <directory>./tests/unit/</directory>
+        <testsuite name="concepts">
+            <directory>./tests/unit/concepts/</directory>
+        </testsuite>
+        <testsuite name="converters">
+            <directory>./tests/unit/converters/</directory>
+        </testsuite>
+        <testsuite name="objects">
+            <directory>./tests/unit/objects/</directory>
+        </testsuite>
+        <testsuite name="persistence">
+            <directory>./tests/unit/persistence/</directory>
+        </testsuite>
+        <testsuite name="types">
+            <directory>./tests/unit/types/</directory>
         </testsuite>
     </testsuites>
 
@@ -13,6 +25,14 @@
         <ini name="error_reporting" value="E_ALL"/>
         <env name="s3_key" value="" />
         <env name="s3_secret" value="" />
+        
+        <env name="require_bootstrap" value="true" />
+        
+        <!--env name="client_url" value="" /-->
+        <!--env name="client_username" value="" /-->
+        <!--env name="client_password" value="" /-->
+    
+        <env name="dsl_modules_path" value="tests/platform/modules/Modules.php" />
     </php>
 
     <filter>

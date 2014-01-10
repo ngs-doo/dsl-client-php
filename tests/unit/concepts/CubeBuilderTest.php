@@ -8,6 +8,17 @@ use Test\FooCube\findByBar;
 
 class CubeBuilderTest extends \PHPUnit_Framework_TestCase
 {
+    private static function createBuilder()
+    {
+        $cube = new FooCube();
+        return $cube->builder()
+            ->facts(array('count'))
+            ->add('total')
+            ->dimension('num')
+            ->desc('count')
+            ->desc('total');
+    }
+    
     public function invalidDimensionsAndFacts()
     {
         return array(
@@ -21,7 +32,7 @@ class CubeBuilderTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function setUpPersist()
+    public function persistTestData()
     {
         $proxy = new StandardProxy();
         $proxy->delete(Foo::findAll());
@@ -42,18 +53,12 @@ class CubeBuilderTest extends \PHPUnit_Framework_TestCase
         $proxy->delete(Foo::findAll());
     }
 
-    public function testCubeBuilder()
+    public function testCubeBuilderAnalyze()
     {
-        $this->setUpPersist();
-
-        $cube = new FooCube();
-        $builder = $cube->builder()
-            ->facts(array('count'))
-            ->add('total')
-            ->dimension('num')
-            ->desc('count')
-            ->desc('total')
-        ;
+        $this->persistTestData();
+        
+        $builder = static::createBuilder();
+      
         $rows = $builder->analyze();
 
         $expectedRows = array(
@@ -63,20 +68,43 @@ class CubeBuilderTest extends \PHPUnit_Framework_TestCase
         );
         $this->assertSame(3, count($rows));
         $this->assertSame($expectedRows, $rows);
-
-        // with limit and offset
-        $builder->limit(1)->offset(1);
-        $rows2 = $builder->analyze();
+    }
+    
+    public function testCubeBuilderAnalyzeWithOrder()
+    {
+        $this->persistTestData();
         
-        $this->assertSame(1, count($rows2));
-        $this->assertSame(array($expectedRows[1]), $rows2); 
+        $builder = static::createBuilder()
+            ->asc('count')
+            ->desc('total');
+        $rows = $builder->analyze();
+        
+        $expectedRows = array(
+            array('num' => 3, 'count' => 1, 'total' => 3),
+            array('num' => 1, 'count' => 1, 'total' => 1),
+            array('num' => 2, 'count' => 2, 'total' => 4),
+        );
+        $this->assertSame($expectedRows, $rows);
+    }
+
+    /**
+     * @group cubefail
+     */
+    public function testCubeBuildeAnalyzeWithLimitAndOffset()
+    {
+        $this->persistTestData();
+        
+        $builder = static::createBuilder();
+        $builder->limit(1)->offset(1);
+        $rows = $builder->analyze();
+        $this->assertSame(1, count($rows));
         
         $this->tearDownPersist();
     }
 
     public function testCubeBuilderWithSpecification()
     {
-        $this->setUpPersist();
+        $this->persistTestData();
 
         $cube = new FooCube();
         $specification = new findByBar(array('query'=>'a'));
