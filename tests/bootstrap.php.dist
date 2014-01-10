@@ -31,4 +31,4 @@ $client = new NGS\Client\RestHttp($url, $username, $password);
 NGS\Client\RestHttp::instance($client);
 
 require_once __DIR__.'/BaseTestCase.php';
-require_once cfg('dsl_modules_path');
+require_once cfg('modules_path');

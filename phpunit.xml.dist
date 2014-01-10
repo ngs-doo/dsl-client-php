@@ -32,7 +32,7 @@
         <!--env name="client_username" value="" /-->
         <!--env name="client_password" value="" /-->
     
-        <env name="dsl_modules_path" value="tests/platform/modules/Modules.php" />
+        <env name="modules_path" value="tests/platform/modules/Modules.php" />
     </php>
 
     <filter>
