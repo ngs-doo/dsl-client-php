@@ -29,5 +29,7 @@ module Properties
     {
         string str;
         rootObject[]? *items;
+        rootObject[] *itemsNull;
+        rootObject[] *itemsSnap { snapshot; }
     }
 }

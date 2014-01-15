@@ -180,6 +180,13 @@ module Test
 
     root recompileMePlease
     {
-        string v1;
+        string v2;
+    }
+		
+    enum en;
+
+    root EnumFoo
+    {
+        en? emptyEnum;
     }
 }
