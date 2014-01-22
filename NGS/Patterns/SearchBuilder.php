@@ -29,9 +29,11 @@ class SearchBuilder extends Search
 
     public function search()
     {
+        $class = get_class($this->specification);
+        $target = substr($class, 0, strrpos($class, '\\'));
         return
             DomainProxy::instance()->searchWithSpecification(
-                Name::parent($this->specification),
+                $target,
                 $this->specification,
                 $this->limit,
                 $this->offset,

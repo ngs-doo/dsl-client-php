@@ -2,10 +2,8 @@
 namespace NGS\Converter;
 
 require_once(__DIR__.'/ConverterInterface.php');
-require_once(__DIR__.'/../Name.php');
 require_once(__DIR__.'/../Patterns/IDomainObject.php');
 
-use NGS\Name;
 use NGS\Patterns\IdomainObject;
 
 /**
@@ -73,9 +71,6 @@ class ObjectConverter implements ConverterInterface
     {
         if(!is_string($object)) {
             $object = get_class($object);
-        }
-        else {
-            $object = Name::toClass($object);
         }
         $names = explode('\\', $object);
         $class = array_pop($names);

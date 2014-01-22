@@ -2,7 +2,6 @@
 namespace NGS\Client;
 
 require_once(__DIR__.'/../Utils.php');
-require_once(__DIR__.'/../Name.php');
 require_once(__DIR__.'/RestHttp.php');
 require_once(__DIR__.'/../Patterns/Repository.php');
 require_once(__DIR__.'/QueryString.php');
@@ -110,7 +109,7 @@ class StandardProxy
         }
         $converter = ObjectConverter::getConverter($class, ObjectConverter::JSON_TYPE);
         $body = array(
-            'RootName' => Name::full($class),
+            'RootName' => $this->http->getDslName($class),
             // 'ToDelete' is json encoded inside json
             'ToDelete' => $converter::toJson($aggregates)
         );
@@ -128,7 +127,7 @@ class StandardProxy
     private function persist($method, array $aggregates)
     {
         $class = get_class($aggregates[0]);
-        $name = Name::full($class);
+        $name = $this->http->getDslName($class);
         $values = array_map(function($it) { return $it->toArray(); }, $aggregates);
         return
             $this->http->sendRequest(
@@ -152,9 +151,9 @@ class StandardProxy
         $limit = null,
         $offset = null)
     {
-        $cube = Name::full($cube);
-        $name = Name::base($specification);
-        $fullName = Name::full($specification);
+        $cube = $this->http->getDslName($cube);
+        $name = $this->http->getDslObjectName($specification);
+        $fullName = $this->http->getDslName($specification);
         if(strncmp($fullName, $cube, strlen($cube)) != 0)
             $name = substr($fullName, 0, strlen($fullName) - strlen($name) - 1).'+'.$name;
         $arguments = QueryString::prepareCubeCall($dimensions, $facts, $order, $limit, $offset);
@@ -178,7 +177,7 @@ class StandardProxy
         $limit = null,
         $offset = null)
     {
-        $cube = Name::full($cube);
+        $cube = $this->http->getDslName($cube);
         $arguments = QueryString::prepareCubeCall($dimensions, $facts, $order, $limit, $offset);
         $response =
             $this->http->sendRequest(
