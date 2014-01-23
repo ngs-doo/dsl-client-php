@@ -55,11 +55,13 @@ abstract class OlapCube
         array $dimensions,
         array $facts = array(),
         array $order = array(),
-        Specification $specification = null)
+        Specification $specification = null,
+        $limit = null,
+        $offset = null)
     {
         $proxy = new StandardProxy($this->restHttp);
         return $specification === null
-            ? $proxy->olapCube($this, $dimensions, $facts, $order)
-            : $proxy->olapCubeWithSpecification($this, $specification, $dimensions, $facts, $order);
+            ? $proxy->olapCube($this, $dimensions, $facts, $order, $limit, $offset)
+            : $proxy->olapCubeWithSpecification($this, $specification, $dimensions, $facts, $order, $limit, $offset);
     }
 }

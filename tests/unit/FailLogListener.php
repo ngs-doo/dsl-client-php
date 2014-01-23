@@ -7,7 +7,6 @@ class FailLogListener implements PHPUnit_Framework_TestListener
 
     public function __construct ()
     {
-        echo 'connstruct';
         RestHttp::instance()->addSubscriber(array($this, 'logHttpEvent'));
     }
 

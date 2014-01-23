@@ -4,8 +4,17 @@ use NGS\Converter\XmlConverter;
 /**
  * Test constructors
  */
-class XmlTest extends PHPUnit_Framework_TestCase
+class XmlTest extends BaseTestCase
 {
+    public static function providerXmlFiles()
+    {
+        return array(
+            array('books.xml'),
+            array('orders.xml'),
+            array('ampersands.xml'),
+        );
+    }
+    
     public static function providerInvalid()
     {
         return array(
@@ -15,24 +24,24 @@ class XmlTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public static function providerValid()
+    public function providerValid()
     {
         $xmls = array(
             array(
-                '<ChildrenWithSameName>'.
-                    '<Param key="name">Mirko</Param>'.
-                    '<Param key="phone">123</Param>'.
-                '</ChildrenWithSameName>'
+'<ChildrenWithSameName>
+  <Param key="name">Mirko</Param>
+  <Param key="phone">123</Param>
+</ChildrenWithSameName>'
             ),
             array(
-                '<ChildrenWithSameName>'.
-                    '<Param>'.
-                        '<Param>1</Param>'.
-                        '<Param>1</Param>'.
-                        '<Param>2</Param>'.
-                    '</Param>'.
-                    '<Param key="phone">123</Param>'.
-                '</ChildrenWithSameName>'
+'<ChildrenWithSameName>
+  <Param>
+    <Param>1</Param>
+    <Param>1</Param>
+    <Param>2</Param>
+  </Param>
+  <Param key="phone">123</Param>
+</ChildrenWithSameName>'
             ),
             array(
                 "<singleRoot>text</singleRoot>",
@@ -48,6 +57,11 @@ class XmlTest extends PHPUnit_Framework_TestCase
                 $val[1] = $val[0];
             else
                 $val[1] =  "<?xml version=\"1.0\"?>\n".$val[1]."\n";
+        }
+        
+        foreach (self::providerXmlFiles() as $data) {
+            $content = file_get_contents($this->getFile($data[0]));
+            $xmls[] = array($content, $content);
         }
         return $xmls;
     }
@@ -95,9 +109,9 @@ class XmlTest extends PHPUnit_Framework_TestCase
 
         $xmlFromArr = XmlConverter::toXml($arr);
 
-        $this->assertSame($expected, $xmlFromArr->asXml());
+        $this->assertSame($expected, $this->formatXml($xmlFromArr));
     }
-
+    
     public function testFromArrayEscapesAmpersands()
     {
         $source = array(
@@ -115,58 +129,45 @@ class XmlTest extends PHPUnit_Framework_TestCase
         $xmlFromString = XmlConverter::toXml($expectedXml);
         $this->assertSame($expectedXml, $xmlFromString->asXML());
     }
-
-    public function testParseSampleDocument()
+    
+    /**
+     * @dataProvider providerValid
+     */
+    public function testPersistAndLoadXml($xmlContent)
     {
-        $xmlString = '<?xml version="1.0"?>
-<PurchaseOrder PurchaseOrderNumber="99503" OrderDate="1999-10-20">
-  <Address Type="Shipping">
-    <Name>Ellen Adams</Name>
-    <Street>123 Maple Street</Street>
-    <City>Mill Valley</City>
-    <State>CA</State>
-    <Zip>10999</Zip>
-    <Country>USA</Country>
-  </Address>
-  <Address Type="Billing">
-    <Name>Tai Yee</Name>
-    <Street>8 Oak Avenue</Street>
-    <City>Old Town</City>
-    <State>PA</State>
-    <Zip>95819</Zip>
-    <Country>USA</Country>
-  </Address>
-  <DeliveryNotes>Please leave packages in shed by driveway.</DeliveryNotes>
-  <Items>
-    <Item PartNumber="872-AA">
-      <ProductName>Lawnmower</ProductName>
-      <Quantity>1</Quantity>
-      <USPrice>148.95</USPrice>
-      <Comment>Confirm this is electric</Comment>
-    </Item>
-    <Item PartNumber="926-AA">
-      <ProductName>Baby Monitor</ProductName>
-      <Quantity>2</Quantity>
-      <USPrice>39.98</USPrice>
-      <ShipDate>1999-05-21</ShipDate>
-    </Item>
-  </Items>
-</PurchaseOrder>
-';
-
-        $xml = XmlConverter::toXml($xmlString);
-        $this->assertSame($xmlString, $xml->asXML());
-
-        $xmlArray = XmlConverter::toArray($xml);
-        $xmlFromArray = XmlConverter::toXml($xmlArray);
-
-        // xml from array does not preserve whitespace
+        $item = new Test\Elem();
+        $item->data = $xmlContent;
+        $oldXml = $item->data;
+        
+        $item->persist();
+        
+        $fetched = Test\Elem::find($item->URI);
+        
+        $this->assertSame($this->formatXml($oldXml), $this->formatXml($fetched->data));
+        
+        $item->delete();
+    }
+    
+    public function testSingleElement()
+    {
+        $str = "<singleRoot>text</singleRoot>";
+        $arr = array('singleRoot' => 'text');
+        $arr2 = array('singleRoot' => array('#text' => 'text'));        
+        
+        $xml1 = XmlConverter::toXml($str);
+        $xml2 = XmlConverter::toXml($arr);
+        $xml3 = XmlConverter::toXml($arr2);
+        
+        $this->assertEquals($xml1, $xml2);
+        $this->assertEquals($xml2, $xml3);
+    }
+    
+    private function formatXml(SimpleXMLElement $xml)
+    {
         $dom = new DOMDocument('1.0');
         $dom->preserveWhiteSpace = false;
-        $dom->formatOutput = false;
+        $dom->formatOutput = true;
         $dom->loadXML($xml->asXML());
-        $xmlNoWhitespace = $dom->saveXML();
-
-        $this->assertSame($xmlNoWhitespace, $xmlFromArray->asXML());
+        return $dom->saveXML();
     }
 }

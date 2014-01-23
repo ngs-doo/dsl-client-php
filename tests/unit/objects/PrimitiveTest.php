@@ -16,7 +16,8 @@ class PrimitiveTest extends PHPUnit_Framework_TestCase
                     'code'          => 42,
                     'description'   => 'php rulz',
                     'bitmask'       => array(true, false, true, false),
-                    'polygon'       => array(1.3, 2.1234, 3.14)
+                    'polygon'       => array(1.3, 2.1234, 3.14),
+                    'ext'           => null,
                 )
             ),
             array(
@@ -24,7 +25,8 @@ class PrimitiveTest extends PHPUnit_Framework_TestCase
                     'code'          => 0,
                     'description'   => null,
                     'bitmask'       => null,
-                    'polygon'       => array()
+                    'polygon'       => array(),
+                    'ext'           => \Img\Extension::jpg,
                 )
             ),
             array(
@@ -32,7 +34,8 @@ class PrimitiveTest extends PHPUnit_Framework_TestCase
                     'code'          => 0,
                     'description'   => '',
                     'bitmask'       => array(),
-                    'polygon'       => array()
+                    'polygon'       => array(),
+                    'ext'           => \Img\Extension::bmp,
                 )
             )
         );
@@ -158,7 +161,7 @@ class PrimitiveTest extends PHPUnit_Framework_TestCase
             'bitmask'       => array(true, false),
             'polygon'       => array(1.5)
         );
-        $res = 'Img\Icon{"code":42,"description":"php rulz","bitmask":[true,false],"polygon":[1.5]}';
+        $res = 'Img\Icon{"code":42,"description":"php rulz","bitmask":[true,false],"polygon":[1.5],"ext":null}';
         $this->assertSame($res, (string) new Icon($values));
     }
 

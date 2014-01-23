@@ -22,20 +22,30 @@ class RootCollectionPropertyTest extends PHPUnit_Framework_TestCase
     public function testPersistAndReadRootCollectionProperty()
     {
         $roots = $this->roots;
-        $rootsUris = array_map(function($r) { return $r->URI; }, $roots);
+        $uris = array_map(function($r) { return $r->URI; }, $roots);
 
         $obj = new \Properties\rootCollectionRoot();
         $obj->items = $roots;
+        $obj->itemsNull = $roots;
+        $obj->itemsSnap = $roots;
         $obj->persist();
-
+        
         $loaded = \Properties\rootCollectionRoot::find($obj->URI);
 
-        $this->assertEquals($rootsUris, $loaded->itemsURI);
+        $this->assertEquals($uris, $obj->itemsURI);
+        $this->assertEquals($uris, $obj->itemsNullURI);
+        $this->assertEquals($uris, $obj->itemsSnapURI);
+        $this->assertEquals($uris, $loaded->itemsURI);
+        $this->assertEquals($uris, $loaded->itemsNullURI);
+        $this->assertEquals($uris, $loaded->itemsSnapURI);
+        $this->assertEquals($roots, $obj->items);
+        $this->assertEquals($roots, $obj->itemsNull);
+        $this->assertEquals($roots, $obj->itemsSnap);
         $this->assertEquals($roots, $loaded->items);
-
-        // $this->assertEquals($obj, $obj::fromJson($obj->toJson()));
+        $this->assertEquals($roots, $loaded->itemsNull);
+        $this->assertEquals($roots, $loaded->itemsSnap);
     }
-
+    
     public function testPropertyIsset()
     {
         $obj = new \Properties\rootCollectionRoot();

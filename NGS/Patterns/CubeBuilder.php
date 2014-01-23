@@ -29,6 +29,8 @@ class CubeBuilder
     protected $dimensions = array();
     protected $facts = array();
     protected $order = array();
+    protected $limit;
+    protected $offset;
     protected $specification;
 
     /**
@@ -182,6 +184,30 @@ class CubeBuilder
     }
 
     /**
+     * Limit resulting rows
+     *
+     * @param $limit 
+     * @return $this
+     */
+    public function limit($limit)
+    {
+        $this->limit = PrimitiveConverter::toInteger($limit);
+        return $this;
+    }
+    
+    /**
+     * Offset results
+     * 
+     * @param $offset
+     * @return $this
+     */
+    public function offset($offset)
+    {
+        $this->offset = PrimitiveConverter::toInteger($offset);
+        return $this;
+    }
+
+    /**
      * Use specification in cube analysis
      *
      * @param Specification
@@ -204,7 +230,9 @@ class CubeBuilder
             $this->dimensions,
             $this->facts,
             $this->order,
-            $this->specification
+            $this->specification,
+            $this->limit,
+            $this->offset
         );
     }
 

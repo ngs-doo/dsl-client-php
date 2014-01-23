@@ -2,7 +2,6 @@
 namespace NGS\Client;
 
 require_once(__DIR__.'/../Utils.php');
-require_once(__DIR__.'/../Name.php');
 require_once(__DIR__.'/RestHttp.php');
 require_once(__DIR__.'/../Patterns/Repository.php');
 
@@ -64,7 +63,7 @@ class CrudProxy
     public function create(AggregateRoot $aggregate)
     {
         $class = get_class($aggregate);
-        $name = Name::full($class);
+        $name = $this->http->getDslName($class);
         $response =
             $this->http->sendRequest(
                 self::CRUD_URI.'/'.rawurlencode($name),
@@ -84,7 +83,7 @@ class CrudProxy
     public function update(AggregateRoot $aggregate)
     {
         $class = get_class($aggregate);
-        $name = Name::full($class);
+        $name = $this->http->getDslName($class);
         $response =
             $this->http->sendRequest(
                 self::CRUD_URI.'/'.rawurlencode($name).'?uri='.rawurlencode($aggregate->getURI()),
@@ -106,7 +105,7 @@ class CrudProxy
      */
     public function delete($class, $uri)
     {
-        $name = Name::full($class);
+        $name = $this->http->getDslName($class);
         $response =
             $this->http->sendRequest(
                 self::CRUD_URI.'/'.rawurlencode($name).'?uri='.rawurlencode($uri),
@@ -127,7 +126,7 @@ class CrudProxy
      */
     public function read($class, $uri)
     {
-        $name = Name::full($class);
+        $name = $this->http->getDslName($class);
         $response =
             $this->http->sendRequest(
                 self::CRUD_URI.'/'.rawurlencode($name).'?uri='.rawurlencode($uri),

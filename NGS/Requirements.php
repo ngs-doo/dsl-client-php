@@ -4,7 +4,6 @@ require_once __DIR__.'/BigInt.php';
 require_once __DIR__.'/ByteStream.php';
 require_once __DIR__.'/LocalDate.php';
 require_once __DIR__.'/Money.php';
-require_once __DIR__.'/Name.php';
 require_once __DIR__.'/Timestamp.php';
 require_once __DIR__.'/Utils.php';
 require_once __DIR__.'/UUID.php';

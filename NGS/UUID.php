@@ -87,54 +87,12 @@ class UUID
     }
 
     /**
-     * Constructs new UUID instance by with generated version 3 UUID (MD5 hash)
-     * @param    string|\NGS\UUID uuid $namespace
-     * @param    string    $name
-     * @return \NGS\UUID
-     * @throws \InvalidArgumentException
-     */
-    public static function v3($namespace, $name)
-    {
-        if ($namespace instanceof \NGS\UUID) {
-            $namespace = $namespace->value;
-        }
-        elseif (!is_string($namespace)) {
-            throw new \InvalidArgumentException('Cannot create uuid v3 from invalid namespace type: "'.Utils::getType($namespace).'"');
-        }
-        if(!is_string($name)) {
-            throw new \InvalidArgumentException('Cannot create uuid v3 from invalid name type: "'.Utils::getType($namespace).'"');
-        }
-        return new UUID(self::_v3($namespace, $name));
-    }
-
-    /**
      * Constructs new UUID instance with generated version 4 UUID (random)
      * @return \NGS\UUID
      */
     public static function v4()
     {
         return new UUID(self::_v4());
-    }
-
-    /**
-     * Constructs new UUID instance with generated version 5 UUID (SHA-1 hash)
-     * @param    string|\NGS\UUID uuid $namespace
-     * @param    string    $name
-     * @return \NGS\UUID
-     * @throws \InvalidArgumentException
-     */
-    public static function v5($namespace, $name)
-    {
-        if ($namespace instanceof \NGS\UUID) {
-            $namespace = $namespace->value;
-        }
-        elseif (!is_string($namespace)) {
-            throw new \InvalidArgumentException('Cannot create uuid v5 from invalid namespace type: "'.Utils::getType($namespace).'"');
-        }
-        if(!is_string($name)) {
-            throw new \InvalidArgumentException('Cannot create uuid v5 from invalid name type: "'.Utils::getType($namespace).'"');
-        }
-        return new UUID(self::_v5($namespace, $name));
     }
 
     /**
@@ -151,148 +109,30 @@ class UUID
      * @param string $uuid
      * @return bool
      */
-    public static function isValid($uuid)
+    public static function isValid($uuidString)
     {
-        if (!is_string($uuid)) {
-            throw new \InvalidArgumentException('UUID value was not a string, type was: '.\NGS\Utils::gettype($uuid));
+        if (!is_string($uuidString)) {
+            throw new \InvalidArgumentException('UUID value was not a string, type was: '.\NGS\Utils::gettype($uuidString));
         }
-        return preg_match('/^\{?[0-9a-f]{8}\-?[0-9a-f]{4}\-?[0-9a-f]{4}\-?'.
-            '[0-9a-f]{4}\-?[0-9a-f]{12}\}?$/i', $uuid) === 1;
+        return preg_match('/^\{?[0-9a-f]{8}\-?[0-9a-f]{4}\-?[0-9a-f]{4}\-?[0-9a-f]{4}\-?[0-9a-f]{12}\}?$/i', $uuidString) === 1;
     }
 
     /**
-     * Generate v3 UUID
-     *
-     * Version 3 UUIDs are named based. They require a namespace (another
-     * valid UUID) and a value (the name). Given the same namespace and
-     * name, the output is always the same.
-     *
-     * @param    uuid    $namespace
-     * @param    string    $name
-     */
-    private static function _v3($namespace, $name)
-    {
-        if(!self::isValid($namespace)) {
-            throw new \InvalidArgumentException('Cannot create uuid v3 from invalid namespace with value: "'.$namespace.'"');
-        }
-
-        // Get hexadecimal components of namespace
-        $nhex = str_replace(array('-','{','}'), '', $namespace);
-
-        // Binary Value
-        $nstr = '';
-
-        // Convert Namespace UUID to bits
-        for($i = 0; $i < strlen($nhex); $i+=2)
-        {
-            $nstr .= chr(hexdec($nhex[$i].$nhex[$i+1]));
-        }
-
-        // Calculate hash value
-        $hash = md5($nstr . $name);
-
-        return sprintf('%08s-%04s-%04x-%04x-%12s',
-
-            // 32 bits for "time_low"
-            substr($hash, 0, 8),
-
-            // 16 bits for "time_mid"
-            substr($hash, 8, 4),
-
-            // 16 bits for "time_hi_and_version",
-            // four most significant bits holds version number 3
-            (hexdec(substr($hash, 12, 4)) & 0x0fff) | 0x3000,
-
-            // 16 bits, 8 bits for "clk_seq_hi_res",
-            // 8 bits for "clk_seq_low",
-            // two most significant bits holds zero and one for variant DCE1.1
-            (hexdec(substr($hash, 16, 4)) & 0x3fff) | 0x8000,
-
-            // 48 bits for "node"
-            substr($hash, 20, 12)
-        );
-    }
-
-    /**
-     *
      * Generate v4 UUID
-     *
      * Version 4 UUIDs are pseudo-random.
+     * The form is following: xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
+     * where x is any hexadecimal digit and y is one of 8, 9, A, or B
+     * 
+     * @return string
      */
     private static function _v4()
     {
-        return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-
-            // 32 bits for "time_low"
+        return sprintf('%04x%04x-%04x-4%03x-%04x-%06x%06x',
             mt_rand(0, 0xffff), mt_rand(0, 0xffff),
-
-            // 16 bits for "time_mid"
             mt_rand(0, 0xffff),
-
-            // 16 bits for "time_hi_and_version",
-            // four most significant bits holds version number 4
-            mt_rand(0, 0x0fff) | 0x4000,
-
-            // 16 bits, 8 bits for "clk_seq_hi_res",
-            // 8 bits for "clk_seq_low",
-            // two most significant bits holds zero and one for variant DCE1.1
+            mt_rand(0, 0xfff),
             mt_rand(0, 0x3fff) | 0x8000,
-
-            // 48 bits for "node"
-            mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
-        );
-    }
-
-    /**
-     * Generate v5 UUID
-     *
-     * Version 5 UUIDs are named based. They require a namespace (another
-     * valid UUID) and a value (the name). Given the same namespace and
-     * name, the output is always the same.
-     *
-     * @param    uuid    $namespace
-     * @param    string    $name
-     */
-    private static function _v5($namespace, $name)
-    {
-        if(!self::isValid($namespace)) {
-            throw new \InvalidArgumentException('Cannot create uuid v5 from invalid namespace with value: "'.$namespace.'"');
-        }
-
-        // Get hexadecimal components of namespace
-        $nhex = str_replace(array('-','{','}'), '', $namespace);
-
-        // Binary Value
-        $nstr = '';
-
-        // Convert Namespace UUID to bits
-        for($i = 0; $i < strlen($nhex); $i+=2)
-        {
-            $nstr .= chr(hexdec($nhex[$i].$nhex[$i+1]));
-        }
-
-        // Calculate hash value
-        $hash = sha1($nstr . $name);
-
-        return sprintf('%08s-%04s-%04x-%04x-%12s',
-
-            // 32 bits for "time_low"
-            substr($hash, 0, 8),
-
-            // 16 bits for "time_mid"
-            substr($hash, 8, 4),
-
-            // 16 bits for "time_hi_and_version",
-            // four most significant bits holds version number 5
-            (hexdec(substr($hash, 12, 4)) & 0x0fff) | 0x5000,
-
-            // 16 bits, 8 bits for "clk_seq_hi_res",
-            // 8 bits for "clk_seq_low",
-            // two most significant bits holds zero and one for variant DCE1.1
-            (hexdec(substr($hash, 16, 4)) & 0x3fff) | 0x8000,
-
-            // 48 bits for "node"
-            substr($hash, 20, 12)
+            mt_rand(0, 0xffffff), mt_rand(0, 0xffffff)
         );
     }
 }

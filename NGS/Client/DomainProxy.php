@@ -2,7 +2,6 @@
 namespace NGS\Client;
 
 require_once(__DIR__.'/../Utils.php');
-require_once(__DIR__.'/../Name.php');
 require_once(__DIR__.'/RestHttp.php');
 require_once(__DIR__.'/../Converter/PrimitiveConverter.php');
 require_once(__DIR__.'/../Patterns/Repository.php');
@@ -74,13 +73,13 @@ class DomainProxy
      */
     public function find($class, array $uris)
     {
-        $name = Name::full($class);
-        $body = array('Name' => $name, 'Uri' => PrimitiveConverter::toStringArray($uris));
+        $name = $this->http->getDslName($class);
+        $body = json_encode(PrimitiveConverter::toStringArray($uris));
         $response =
             $this->http->sendRequest(
-                ApplicationProxy::APPLICATION_URI.'/GetDomainObject',
-                'POST',
-                json_encode($body),
+                self::DOMAIN_URI.'/find/'.rawurlencode($name),
+                'PUT',
+                $body,
                 array(200));
         return RestHttp::parseResult($response, $class);
     }
@@ -108,7 +107,7 @@ class DomainProxy
         $offset = null,
         array $order = null)
     {
-        $name = Name::full($class);
+        $name = $this->http->getDslName($class);
         $lo = QueryString::formatLimitAndOffsetAndOrder($limit, $offset, $order);
         $response =
             $this->http->sendRequest(
@@ -137,8 +136,8 @@ class DomainProxy
         $offset = null,
         array $order = null)
     {
-        $objectName = Name::full($class);
-        $specName = Name::parent($specification).'+'.Name::base($specification);
+        $objectName = $this->http->getDslName($class);
+        $specName = $this->http->getDslModuleName($specification).'+'.$this->http->getDslObjectName($specification);
         $lo = QueryString::formatLimitAndOffsetAndOrder($limit, $offset, $order);
         $response =
             $this->http->sendRequest(
@@ -149,7 +148,7 @@ class DomainProxy
                 'PUT',
                 $specification->toJson(),
                 array(200));
-        return RestHttp::parseResult($response, Name::toClass($class));
+        return RestHttp::parseResult($response, $this->http->getClassName($objectName));
     }
 
     /**
@@ -169,7 +168,7 @@ class DomainProxy
         $offset = null,
         array $order = null)
     {
-        $object = Name::full($class);
+        $object = $this->http->getDslName($class);
         $lo = QueryString::formatLimitAndOffsetAndOrder($limit, $offset, $order);
         $response =
             $this->http->sendRequest(
@@ -177,7 +176,7 @@ class DomainProxy
                 'PUT',
                 json_encode($filters),
                 array(200));
-        return RestHttp::parseResult($response, Name::toClass($object));
+        return RestHttp::parseResult($response, $this->http->getClassName($object));
     }
 
     /**
@@ -191,14 +190,14 @@ class DomainProxy
         $class,
         array $filters = null)
     {
-        $object = Name::full($class);
+        $object = $this->http->getDslName($class);
         $response =
             $this->http->sendRequest(
                 self::DOMAIN_URI.'/count-generic/'.rawurlencode($object),
                 'PUT',
                 json_encode($filters),
                 array(200));
-        return RestHttp::parseResult($response, Name::toClass($object));
+        return RestHttp::parseResult($response, $this->http->getClassName($object));
     }
 
     /**
@@ -209,7 +208,7 @@ class DomainProxy
      */
     public function count($class)
     {
-        $name = Name::full($class);
+        $name = $this->http->getDslName($class);
         $response = $this->http->sendRequest(
             self::DOMAIN_URI.'/count/'.rawurlencode($name),
             'GET',
@@ -227,8 +226,8 @@ class DomainProxy
      */
     public function countWithSpecification(Specification $specification)
     {
-        $object = Name::parent($specification);
-        $name = Name::base($specification);
+        $object = $this->http->getDslModuleName($specification);
+        $name = $this->http->getDslObjectName($specification);
         $response =
             $this->http->sendRequest(
                 self::DOMAIN_URI.'/count/'.rawurlencode($object).'?specification='.rawurlencode($name),
@@ -248,7 +247,7 @@ class DomainProxy
      */
     public function submitEvent(DomainEvent $event)
     {
-        $name = Name::full($event);
+        $name = $this->http->getDslName($event);
         $response =
             $this->http->sendRequest(
                 self::DOMAIN_URI.'/submit/'.rawurlencode($name),
@@ -269,16 +268,16 @@ class DomainProxy
      */
     public function submitAggregateEvent(AggregateDomainEvent $event, $uri)
     {
-        $object = Name::parent($event);
-        $name = Name::base($event);
+        $rootName = $this->http->getDslModuleName($event);
+        $eventName = $this->http->getDslObjectName($event);
         $response =
             $this->http->sendRequest(
-                self::DOMAIN_URI.'/submit/'.rawurlencode($object).'/'.rawurlencode($name).'?uri='.rawurlencode($uri),
+                self::DOMAIN_URI.'/submit/'.rawurlencode($rootName).'/'.rawurlencode($eventName).'?uri='.rawurlencode($uri),
                 'POST',
                 $event->toJson(),
                 array(201));
-        Repository::instance()->invalidate($object, $uri);
-        return RestHttp::parseResult($response, Name::toClass($object));
+        Repository::instance()->invalidate($rootName, $uri);
+        return RestHttp::parseResult($response, $this->http->getClassName($rootName));
     }
 
 }

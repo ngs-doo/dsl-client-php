@@ -173,8 +173,20 @@ module Test
         map map;
     }
 
-    value please
+    root Elem
     {
-        string recompile;
+        xml data;
+    }
+
+    root recompileMePlease
+    {
+        string v2;
+    }
+		
+    enum en;
+
+    root EnumFoo
+    {
+        en? emptyEnum;
     }
 }

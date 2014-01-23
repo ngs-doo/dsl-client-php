@@ -12,6 +12,24 @@ require_once(__DIR__.'/../Converter/PrimitiveConverter.php');
  */
 abstract class QueryString
 {
+    private static function prepareLimit($limit)
+    {
+        $limit = $limit === null ? null : PrimitiveConverter::toInteger($limit);
+        if (!$limit) {
+            return null;
+        }
+        return 'limit='.$limit;
+    }
+    
+    private static function prepareOffset($offset)
+    {
+        $offset = $offset === null ? null : PrimitiveConverter::toInteger($offset);
+        if (!$offset) {
+            return null;
+        }
+        return 'offset='.$offset;
+    }
+    
     /**
      * Serializes cube parameters into a query string
      *
@@ -21,7 +39,7 @@ abstract class QueryString
      * @return string
      * @throws \InvalidArgumentException
      */
-    public static function prepareCubeCall(array $dimensions, array $facts, array $order)
+    public static function prepareCubeCall(array $dimensions, array $facts, array $order, $limit=null, $offset=null)
     {
         $params = array();
 
@@ -43,33 +61,17 @@ abstract class QueryString
             });
             $params[] = 'order='.implode(',', $order);
         }
+        if ($limit = static::prepareLimit($limit)) {
+            $params[] = $limit;
+        }
+        if ($offset = static::prepareOffset($offset)) {
+            $params[] = $offset;
+        }
+        
         if (!$params) {
             throw new \InvalidArgumentException('Cube must have at least one argument');
         }
         return implode('&', $params);
-    }
-
-
-    /**
-     * Serializes limit and offset to URL query string
-     *
-     * @param $limit string|int|float
-     * @param $offset string|int|float
-     * @return string
-     */
-    public static function formatLimitAndOffset($limit, $offset)
-    {
-        $limit = $limit === null ? null : PrimitiveConverter::toInteger($limit);
-        $offset = $offset === null ? null : PrimitiveConverter::toInteger($offset);
-
-        $args = array();
-
-        if($limit)
-            $args[] = 'limit='.$limit;
-        if($offset)
-            $args[] = 'offset='.$offset;
-
-        return $args ? '?'.implode('&', $args) : '';
     }
 
     /**
@@ -89,22 +91,18 @@ abstract class QueryString
      */
     public static function formatLimitAndOffsetAndOrder($limit, $offset, array $order=null)
     {
-        $limit = $limit === null ? null : PrimitiveConverter::toInteger($limit);
-        $offset = $offset === null ? null : PrimitiveConverter::toInteger($offset);
+        $params = array();
 
-        $args = array();
-
-        if ($limit) {
-            $args[] = 'limit='.$limit;
+        if ($limit = static::prepareLimit($limit)) {
+            $params[] = $limit;
         }
-        if ($offset) {
-            $args[] = 'offset='.$offset;
+        if ($offset = static::prepareOffset($offset)) {
+            $params[] = $offset;
         }
         if ($order) {
             array_walk($order, function(&$v, $k) {  $v = $v ? $k : '-'.$k; });
-            $args[] = 'order='.implode (',', $order);
+            $params[] = 'order='.implode (',', $order);
         }
-
-        return implode('&', $args);
+        return implode('&', $params);
     }
 }

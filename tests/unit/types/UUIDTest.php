@@ -80,30 +80,7 @@ class UUIDTest extends PHPUnit_Framework_TestCase
     {
         $foo = new UUID($val);
     }
-
-    /**
-     * @dataProvider providerUidsV4
-     */
-    public function testGenerateFromV4($str)
-    {
-        $foo = new UUID($str);
-
-        $foo = UUID::v3($str, 'abc');
-        $bar = UUID::v3($str, 'abc');
-
-        $this->assertSame($foo->value, $bar->value);
-
-        $foo = UUID::v5($str, 'mirko');
-        $bar = UUID::v5($str, 'mirko');
-
-        $this->assertSame($foo->value, $bar->value);
-
-        $foo = UUID::v5($str, 'mirko');
-        $bar = UUID::v5($str, 'slavko');
-
-        $this->assertNotSame($foo->value, $bar->value);
-    }
-
+    
     public function testToArray()
     {
         $strings = array_map(function($val) { return $val[0]; } , $this->providerUidsV4());

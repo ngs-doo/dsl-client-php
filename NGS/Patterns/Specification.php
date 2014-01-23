@@ -43,8 +43,9 @@ abstract class Specification implements IDomainObject
      */
     public function search($limit = null, $offset = null, array $order = null)
     {
-        $domainObject = Name::parent($this);
-        return DomainProxy::instance()->searchWithSpecification($domainObject, $this, $limit, $offset, $order);
+        $class = get_class($this);
+        $target = substr($class, 0, strrpos($class, '\\'));
+        return DomainProxy::instance()->searchWithSpecification($target, $this, $limit, $offset, $order);
     }
 
     /**

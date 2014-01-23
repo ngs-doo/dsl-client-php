@@ -20,7 +20,7 @@ class HistoryTest extends \BaseTestCase
         $newFoo = clone $foo;
         $newFoo->num = 5;
         $newFoo->persist();
-
+        
         $newFoo->delete();
 
         $history = Foo::getHistory($foo->URI);
@@ -52,6 +52,41 @@ class HistoryTest extends \BaseTestCase
             $this->assertEquals($snapshot->getAction(), $snapshot->action);
             $this->assertEquals($snapshot->getValue(), $snapshot->value);
         }
+    }
+    
+    /**
+     * @temp-depends testHistory
+     */
+    public function testMultipleHistory()
+    {
+        $first =  new Foo();
+        $first->bar = (string)\NGS\UUID::v4();
+        $first->persist();
+        $first->delete();
+        
+        $second =  new Foo();
+        $second->bar = (string)\NGS\UUID::v4();
+        $second->persist();
+        $secondv2 = clone $second;
+        $secondv2->num = 3;
+        $secondv2->persist();
+
+        $uris = array($first->URI, $second->URI);
+        
+        $snapshots = Foo::getHistory(array($first->URI, $second->URI));
+        
+        $this->assertCount(2, ($snapshots));
+        $this->assertCount(2, ($snapshots[0]));
+        $this->assertCount(2, ($snapshots[1]));
+        
+        $this->assertEquals('INSERT', $snapshots[0][0]->action);
+        $this->assertEquals('DELETE', $snapshots[0][1]->action);
+        $this->assertEquals($snapshots[0][0]->value, $snapshots[0][1]->value);
+        
+        $this->assertEquals('INSERT', $snapshots[1][0]->action);
+        $this->assertEquals('UPDATE', $snapshots[1][1]->action);
+        $this->assertEquals($second, $snapshots[1][0]->value);
+        $this->assertEquals($secondv2, $snapshots[1][1]->value);
     }
 
     /**

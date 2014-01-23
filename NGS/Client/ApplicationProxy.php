@@ -2,7 +2,6 @@
 namespace NGS\Client;
 
 require_once(__DIR__.'/../Utils.php');
-require_once(__DIR__.'/../Name.php');
 require_once(__DIR__.'/RestHttp.php');
 
 use NGS\Utils;

@@ -2,8 +2,6 @@
 namespace NGS\Client;
 
 require_once(__DIR__.'/../Utils.php');
-require_once(__DIR__.'/../Name.php');
-
 require_once(__DIR__.'/HttpRequest.php');
 require_once(__DIR__.'/Exception/InvalidRequestException.php');
 require_once(__DIR__.'/Exception/NotFoundException.php');
@@ -48,6 +46,11 @@ class RestHttp
     protected $username;
 
     /**
+     * @var string
+     */
+    protected $namespacePrefix;
+
+    /**
      * @var string Authentication string
      */
     protected $auth;
@@ -77,7 +80,7 @@ class RestHttp
             $this->setAuth($username, $password);
         }
     }
-
+    
     /**
      * Set username/password used for http authentication
      *
@@ -300,5 +303,129 @@ class RestHttp
     private function hasSubscribers()
     {
         return !empty($this->subscribers);
+    }
+        
+    /**
+     * Set namespace prefix of generated modules
+     *
+     * @param string $namespace
+     */
+    public function setNamespacePrefix($prefix=null)
+    {
+        if (!is_string($prefix)) {
+            throw new \InvalidArgumentException("Namespace prefix must be a string ");
+        }
+        if (strlen($prefix === '')) {
+            $this->namespacePrefix = null;
+        }
+        if ($prefix[0] === '\\') {
+            $prefix = substr($prefix, 1);
+        }
+        $this->namespacePrefix = $prefix;
+    }
+
+    /**
+     * Get namespace prefix of generated modules
+     *
+     * @return string
+     */
+    public function getNamespacePrefix()
+    {
+        return $this->namespacePrefix;
+    }
+    
+    /**
+     * Gets DSL name from class or object instance
+     * 
+     * @param string|object $name Fully qualified class name or object instance
+     * @return string DSL name
+     */
+    public function getDslName($name)
+    {
+        if (is_object($name)) {
+            $name = get_class($name);
+        }
+        elseif(!is_string($name)) {
+            throw new \InvalidArgumentException('Invalid type for name, name was not string');
+        }
+        if (!strlen($name)) {
+            throw new \InvalidArgumentException('Name cannot be an empty string');
+        }
+        if (static::isDslName($name)) {
+            return $name;
+        }
+        if ($name[0] === '\\') {
+            $name = substr($name, 1);
+        }
+        if ($this->namespacePrefix) {
+            $name = substr($name, strlen($this->namespacePrefix));
+        }
+        return str_replace('\\', '.', $name);
+    }
+
+    /**
+     * Gets class name from DSL name
+     * 
+     * @param string $dslName Fully qualified class name or object instance
+     * @return string DSL name
+     */
+    public function getClassName($name)
+    {
+        if (is_object($name)) {
+            return get_class($name);
+        }
+        if (!is_string($name)) {
+            throw new \InvalidArgumentException('Invalid type for name, name was not a string or an object');
+        }
+        if (static::isClassName($name)) {
+            return $name;
+        }
+        return $this->namespacePrefix
+            ? $this->namespacePrefix.'\\'.str_replace('.', '\\', $name)
+            : str_replace('.', '\\', $name);
+    }
+    
+    /**
+     * Gets DSL name without module
+     *
+     * @param string|object $name Fully qualified class name or object instance
+     * @return string DSL name
+     * @throws \InvalidArgumentException If $name is not a string/object
+     */
+    public function getDslObjectName($name)
+    {
+        if (is_object($name)) {
+            $name = get_class($name);
+        }
+        elseif(!is_string($name)) {
+            throw new \InvalidArgumentException('Invalid type for name, name was not string');
+        }
+        $names = explode('.', str_replace('\\', '.', $name));
+        return array_pop($names);
+    }
+
+    /**
+     * Gets DSL module name
+     *
+     * @param string|object $name Fully qualified class name or object instance
+     * @return string DSL name
+     * @throws \InvalidArgumentExc    /**
+eption If $name is not a string/object
+     */
+    public function getDslModuleName($name)
+    {
+        $names = explode('.', $this->getDslName($name));
+        array_pop($names);
+        return implode('.', $names);
+    }
+    
+    private static function isDslName($name)
+    {
+        return strpos($name, '.') !== false;
+    }
+    
+    private static function isClassName($name)
+    {
+        return strpos($name, '\\') !== false;
     }
 }

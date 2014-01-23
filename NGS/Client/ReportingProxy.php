@@ -2,7 +2,6 @@
 namespace NGS\Client;
 
 require_once(__DIR__.'/../Utils.php');
-require_once(__DIR__.'/../Name.php');
 require_once(__DIR__.'/RestHttp.php');
 require_once(__DIR__.'/QueryString.php');
 
@@ -58,7 +57,7 @@ class ReportingProxy
     public function populateReport($report)
     {
         $class = get_class($report);
-        $name = Name::full($report);
+        $name = $this->http->getDslName($report);
         $response =
         $this->http->sendRequest(
             self::REPORTING_URI.'/report/'.rawurlencode($name),
@@ -78,7 +77,7 @@ class ReportingProxy
      */
     public function createReport($report, $templater)
     {
-        $name = Name::full($report);
+        $name = $this->http->getDslName($report);
         return
             $this->http->sendRequest(
                 self::REPORTING_URI.'/report/'.rawurlencode($name).'/'.rawurlencode($templater),
@@ -108,14 +107,16 @@ class ReportingProxy
         $templater,
         array $dimensions,
         array $facts,
-        array $order = array())
+        array $order = array(),
+        $limit = null,
+        $offset = null)
     {
-        $cube = Name::full($cube);
-        $name = Name::base($specification);
-        $fullName = Name::full($specification);
+        $cube = $this->http->getDslName($cube);
+        $name = $this->http->getDslObjectName($specification);
+        $fullName = $this->http->getDslName($specification);
         if(strncmp($fullName, $cube, strlen($cube)) != 0)
             $name = substr($fullName, 0, strlen($fullName) - strlen($name) - 1).'+'.$name;
-        $arguments = QueryString::prepareCubeCall($dimensions, $facts, $order);
+        $arguments = QueryString::prepareCubeCall($dimensions, $facts, $order, $limit, $offset);
         return
             $this->http->sendRequest(
                 self::REPORTING_URI.'/olap/'.rawurlencode($cube).'/'.rawurlencode($templater).'?specification='.rawurlencode($name).'&'.$arguments,
@@ -142,10 +143,13 @@ class ReportingProxy
         $templater,
         array $dimensions,
         array $facts,
-        array $order = array())
+        array $order = array(),
+        $limit = null,
+        $offset = null)
     {
-        $cube = Name::full($cube);
-        $arguments = QueryString::prepareCubeCall($dimensions, $facts, $order);
+        $cube = $this->http->getDslName($cube);
+        $arguments = QueryString::prepareCubeCall($dimensions, $facts, $order, $limit, $offset);
+        
         return
             $this->http->sendRequest(
                 self::REPORTING_URI.'/olap/'.rawurlencode($cube).'/'.rawurlencode($templater).'?'.$arguments,
@@ -166,8 +170,8 @@ class ReportingProxy
     public function getHistory($class, $uri)
     {
         return is_array($uri)
-            ? $this->getCommandHistory($class, $uri)
-            : $this->getRestHistory($class, $uri);
+            ? $this->getMultipleHistory($class, $uri)
+            : $this->getSingleHistory($class, $uri);
     }
 
     private static function parseHistoryResponse($response, $class)
@@ -194,22 +198,22 @@ class ReportingProxy
         return $result;
     }
 
-    private function getCommandHistory($class, $uris)
+    private function getMultipleHistory($class, $uris)
     {
-        $name = Name::full($class);
-        $body = array('Name' => $name, 'Uri' => PrimitiveConverter::toStringArray($uris));
+        $name = $this->http->getDslName($class);
+        $body = json_encode(PrimitiveConverter::toStringArray($uris));
         $response =
             $this->http->sendRequest(
-                ApplicationProxy::APPLICATION_URI.'/GetRootHistory',
-                'POST',
-                json_encode($body),
+                self::REPORTING_URI.'/history/'.rawurlencode($name),
+                'PUT',
+                $body,
                 array(200));
         return self::parseHistoryResponse($response, $class);
     }
 
-    private function getRestHistory($class, $uri)
+    private function getSingleHistory($class, $uri)
     {
-        $name = Name::full($class);
+        $name = $this->http->getDslName($class);
         $response =
             $this->http->sendRequest(
                 self::REPORTING_URI.'/history/'.rawurlencode($name).'/'.rawurlencode($uri),
@@ -234,7 +238,7 @@ class ReportingProxy
         $class,
         $uri=null)
     {
-        $name = Name::full($class);
+        $name = $this->http->getDslName($class);
         $uriQuery = $uri!==null ? '/'.$uri : '';
         return
             $this->http->sendRequest(
@@ -258,8 +262,8 @@ class ReportingProxy
         $file,
         Specification $specification)
     {
-        $object = Name::parent($specification);
-        $name = Name::base($specification);
+        $object = $this->http->getDslModuleName($specification);
+        $name = $this->http->getDslObjectName($specification);
         return
             $this->http->sendRequest(
                 self::REPORTING_URI.'/templater/'.rawurlencode($file).'/'.rawurlencode($object).'?specification='.rawurlencode($name),
@@ -281,7 +285,7 @@ class ReportingProxy
         $file,
         GenericSearch $search)
     {
-        $object = Name::full($search->getObject());
+        $object = $this->http->getDslName($search->getObject());
         return
             $this->http->sendRequest(
                 self::REPORTING_URI.'/templater-generic/'.rawurlencode($file).'/'.rawurlencode($object),
