@@ -166,7 +166,7 @@ class HttpRequest
         $logger->info('{method} {uri}, {status}, {size} bytes, {time} ms', array(
             'method' => $this->method,
             'uri' => $this->uri,
-            'status' => $headers[0],
+            'status' => isset($headers[0]) ? $headers[0] : 'connection failed' ,
             'size' => strlen($body),
             'time' => $time
         ));
