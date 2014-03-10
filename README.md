@@ -8,15 +8,19 @@ If you are new to the DSL platform, take a look at [introduction] [2] and check 
 
 ## Installing
 
+Run composer to install required dependencies.
+
+    $ composer install
+
 This package should primarily be used for testing. To setup DSL platform in easy way, we recommend you to create and download a project from [dsl-platform.com][1]. For further information about using DSL platform in your projects, follow the instructions in [Setup guide][3].
 
 ## Running tests
 
-To run tests you must have phpunit and copy project files to tests/platform folder. Take a look at [Setup guide][3] to see how to create a new project.
+To run tests you must first copy project files to tests/platform folder. Take a look at [Setup guide][3] to see how to create a new project.
 
-Once you download the project, execute tests by running phpunit from the repository root folder:
+Run phpunit from the composer vendors folder:
 
-    $ phpunit
+    $ ./vendor/bin/phpunit
 
 Some tests need aditional setup:
 
