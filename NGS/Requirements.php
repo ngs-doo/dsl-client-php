@@ -10,6 +10,7 @@ require_once __DIR__.'/UUID.php';
 require_once __DIR__.'/S3.php';
 require_once __DIR__.'/Location.php';
 require_once __DIR__.'/Point.php';
+require_once __DIR__.'/Enum.php';
 
 require_once __DIR__.'/Client/Exception/InvalidRequestException.php';
 require_once __DIR__.'/Client/Exception/NotFoundException.php';
