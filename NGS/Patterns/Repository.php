@@ -51,29 +51,31 @@ class Repository
         if (!is_string($class)) {
             throw new \InvalidArgumentException('Class name must be a string, invalid type was: "'.Utils::getType($class).'"');
         }
-        if (isset($this->cache[$class])) {
-            $memcachedName = $this->prefix.$class.':';
-            if (is_array($uris)) {
-                $names = array();
-                foreach ($uris as $uri) {
+        $memcachedName = $this->prefix.$class.':';
+        if (is_array($uris)) {
+            $names = array();
+            foreach ($uris as $uri) {
+                if (isset($this->cache[$class][$uri])) {
                     unset($this->cache[$class][$uri]);
-                    $names[] = $memcachedName.$uri;
                 }
-                if ($this->memcached) {
-                    // only in PECL memcached >= 2.0.0
-                    if (method_exists($this->memcached, 'deleteMulti')) {
-                        $this->memcached->deleteMulti($names);
-                    }
-                    else {
-                        foreach ($names as $name) {
-                            $this->memcached->delete($name);
-                        }
+                $names[] = $memcachedName.$uri;
+            }
+            if ($this->memcached) {
+                // only in PECL memcached >= 2.0.0
+                if (method_exists($this->memcached, 'deleteMulti')) {
+                    $this->memcached->deleteMulti($names);
+                }
+                else {
+                    foreach ($names as $name) {
+                        $this->memcached->delete($name);
                     }
                 }
             }
-            else {
-                $name = $memcachedName.$uris;
-                unset($this->cache[$class][$uris]);
+        }
+        else {
+            $name = $memcachedName.$uris;
+            unset($this->cache[$class][$uris]);
+            if ($this->memcached) {
                 $this->memcached->delete($name);
             }
         }
