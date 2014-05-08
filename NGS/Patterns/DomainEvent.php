@@ -40,10 +40,6 @@ abstract class DomainEvent
      */
     public function submit()
     {
-        $eventUri = DomainProxy::instance()->submitEvent($this);
-        if (is_string($eventUri)) {
-            $this->URI = $eventUri;
-        }
-        return $eventUri;
+        return DomainProxy::instance()->submitEvent($this, true);
     }
 }

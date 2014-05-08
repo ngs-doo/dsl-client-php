@@ -243,17 +243,22 @@ class DomainProxy
      * Events can't be modified once they are submitted. Only new events can be created.
      *
      * @param DomainEvent $event Event to be executed
-     * @return string Event URI
+     * @param bool $returnInstance Whether to return event instance or event URI
+     * @return mixed Event instance or URI string
      */
-    public function submitEvent(DomainEvent $event)
+    public function submitEvent(DomainEvent $event, $returnInstance=false)
     {
         $name = $this->http->getDslName($event);
+        $returnResult = $returnInstance ? 'instance' : 'uri';
         $response =
             $this->http->sendRequest(
-                self::DOMAIN_URI.'/submit/'.rawurlencode($name),
+                self::DOMAIN_URI.'/submit/'.rawurlencode($name).'?result='.$returnResult,
                 'POST',
                 $event->toJson(),
                 array(201));
+        if ($returnInstance) {
+            return RestHttp::parseResult($response, $this->http->getClassName($event));
+        }
         $uri = RestHttp::parseResult($response);
         return PrimitiveConverter::toString($uri);
     }
