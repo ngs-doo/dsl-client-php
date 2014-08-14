@@ -1,8 +1,8 @@
-# NGS-PHP
+# DSL-platform PHP client
 
 ## Introduction
 
-ngs-php is a set of core PHP files used for interaction of DSL platform and PHP.
+This project is a client library used for interacting with DSL platform from PHP.
 
 If you are new to the DSL platform, take a look at [introduction] [2] and check out [the tutorials] [4]. You can even [try it online] [8].
 

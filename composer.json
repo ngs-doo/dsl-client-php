@@ -1,9 +1,10 @@
 {
-    "name": "ngs/dsl-core",
+    "name": "dsl-platform/client",
     "type": "library",
-    "description": "PHP integration with DSL platform",
+    "keywords": ["DSL", "DDD"],
+    "description": "DSL platform PHP client library",
     "homepage": "https://dsl-platform.com",
-    "version": "1.0.0",
+    "license": "BSD-3-Clause",
     "require": {
         "php": ">=5.3.8",
         "lib-curl": "*",
