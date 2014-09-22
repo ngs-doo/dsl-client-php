@@ -7,10 +7,10 @@ module Store
         Product? *ParentProduct;
         Group? *Group;
         timestamp ModifiedAt { versioning; }
-        detail Packages Package.Product;
+        detail Packages from Package.Product;
     }
 
-    snowflake ProductList Product
+    snowflake ProductList from Product
     {
         Name;
         Price;
@@ -24,7 +24,7 @@ module Store
     {
         string Name;
         Group? *Parent;
-        detail Products Product.Group;
+        detail Products from Product.Group;
     }
 
     root Package

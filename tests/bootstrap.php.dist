@@ -7,28 +7,26 @@ if (!is_file($autoloadPath))
     throw new InvalidArgumentException('vendor/autoload.php file was not found! Did you run \'composer install/update\'?');
 require_once $autoloadPath;
 
-$bootstrapPath = __DIR__.'/platform/Bootstrap.php';
-if(!is_file($bootstrapPath))
-    die("Error: platform bootstrap file not found in: ".$bootstrapPath."\n".
-        "It seems you are missing DSL-platform project files\n".
-        "To run tests, you need to download the zipped DSL-platform project from http://dsl-platform.com and extract the contents of platform folder to: ".__DIR__.'/platform/'."\n");
-
 require_once __DIR__.'/BaseTestCase.php';
 
-if (cfg('require_bootstrap'))
-    require_once $bootstrapPath;
+$dsl_config = __DIR__.'/../dsl_config.json';
+if (!is_file($dsl_config))
+    throw new InvalidArgumentException('No dsl_config.json file was found! Did you setup DSL platform with \'composer install\'');
+$config = json_decode(file_get_contents($dsl_config), true);
 
-function cfg($key) {
-    return isset($_ENV[$key]) ? $_ENV[$key] : null;
-}
+$url = $config['revenj_url'];
+if (substr($url, strlen($url)-1) !== '/')
+    $url .= '/';
 
-$project = parse_ini_file(__DIR__.'/platform/dsl-project.ini');
-$url        = cfg('client_url') !== null ? cfg('client_url') : $project['api-url'];
-$username   = cfg('client_username') !== null ? cfg('client_username') : $project['username'];
-$password   = cfg('client_password') !== null ? cfg('client_password') : $project['project-id'];
-        
-$client = new NGS\Client\RestHttp($url, $username, $password);
+$client = new NGS\Client\RestHttp($url, 'revenj', 'revenj');
 NGS\Client\RestHttp::instance($client);
 
-require_once __DIR__.'/BaseTestCase.php';
-require_once cfg('modules_path');
+$documents = array('template.txt' => '/template.txt');
+foreach ($documents as $src => $dest) {
+    if (file_exists($config['revenj_path'] . '/' . $dest))
+        continue;
+    if (!copy(__DIR__ . '/fixtures/' . $src, $config['revenj_path'] . '/' . $dest))
+        throw new InvalidArgumentException('Could not copy test documents (' . $src . ') to revenj folder!');
+}
+
+// \DslPlatform\Installer::start();

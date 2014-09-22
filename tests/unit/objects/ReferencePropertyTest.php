@@ -10,7 +10,7 @@ class ReferencePropertyTest extends BaseTestCase
 
     public function testPersistEntityReferenceProperty()
     {
-        $this->deleteAll('Entityref\foo');
+        $this->deleteAll('EntityRef\foo');
 
         $ent = new ent();
         $ent->key = 'abc';
@@ -29,7 +29,7 @@ class ReferencePropertyTest extends BaseTestCase
             $this->assertInstanceOf('\NGS\Client\Exception\InvalidRequestException', $ex);
         }
 
-        $this->deleteAll('Entityref\foo');
+        $this->deleteAll('EntityRef\foo');
     }
 
     public function testEntityCollectionReferenceProperty()
@@ -105,10 +105,10 @@ class ReferencePropertyTest extends BaseTestCase
 
     public function testReferenceToSameType()
     {
-        $r1 = new \rt\selfRef(array('a'=>'1'));
-        $r2 = new \rt\selfRef(array('a'=>'2'));
-        $r3 = new \rt\selfRef(array('a'=>'3'));
-        $r4 = new \rt\selfRef(array('a'=>'4'));
+        $r1 = new \Rt\selfRef(array('a'=>'1'));
+        $r2 = new \Rt\selfRef(array('a'=>'2'));
+        $r3 = new \Rt\selfRef(array('a'=>'3'));
+        $r4 = new \Rt\selfRef(array('a'=>'4'));
 
         $r4->persist();
         $r3->refer = $r4;

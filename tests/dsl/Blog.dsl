@@ -20,7 +20,7 @@ module Blog
         }
     }
 
-    snowflake PostView Post
+    snowflake PostView from Post
     {
         Title;
         Content;

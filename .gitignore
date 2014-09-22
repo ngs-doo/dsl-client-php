@@ -1,17 +1,18 @@
-logs
-/docs
+.idea
+*.iml
 nbproject
+
 scripts/
 vendor
 /composer.lock
 
-# managed by dsl platform
-/tests/platform
-
 # override for local test settings
 /phpunit.xml
 
-/tests/log
 
-.idea
-*.iml
+# DSL platform files
+dsl_config.json
+revenj
+Generated-PHP
+dsl-clc.jar
+GeneratedModel.dll

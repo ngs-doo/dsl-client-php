@@ -6,9 +6,9 @@ class RootCollectionPropertyTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $r1 = new \Properties\RootObject(array('title'=>'a'));
+        $r1 = new \Properties\rootObject(array('title'=>'a'));
         $r1->persist();
-        $r2 = new \Properties\RootObject(array('title'=>'b'));
+        $r2 = new \Properties\rootObject(array('title'=>'b'));
         $r2->persist();
         $this->roots = array($r1, $r2);
     }
@@ -16,7 +16,7 @@ class RootCollectionPropertyTest extends PHPUnit_Framework_TestCase
     public function tearDown()
     {
         \NGS\Client\StandardProxy::instance()->delete(\Properties\rootCollectionRoot::findAll());
-        \NGS\Client\StandardProxy::instance()->delete(\Properties\RootObject::findAll());
+        \NGS\Client\StandardProxy::instance()->delete(\Properties\rootObject::findAll());
     }
 
     public function testPersistAndReadRootCollectionProperty()

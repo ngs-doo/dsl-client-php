@@ -18,6 +18,6 @@ module Rt
         selfRef? *refer;
         calculated string nested from 'it => it.refer.refer.refer.a';
         calculated string fromNested from 'it => it.nested';
-        detail parent selfRef.refer;
+        detail parent from selfRef.refer;
     }
 }

@@ -56,8 +56,8 @@ class PropertiesTest extends PHPUnit_Framework_TestCase
     {
         return array(
             array('Properties\valueRoot', 'value', array(
-                new \Properties\ValueObject(),
-                new \Properties\ValueObject(array('str' => 'abc')),
+                new \Properties\valueObject(),
+                new \Properties\valueObject(array('str' => 'abc')),
             )),
         );
     }

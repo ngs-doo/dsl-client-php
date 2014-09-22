@@ -5,15 +5,29 @@
     "description": "DSL platform PHP client library",
     "homepage": "https://dsl-platform.com",
     "license": "BSD-3-Clause",
+    "minimum-stability": "dev",
     "require": {
         "php": ">=5.3.8",
         "lib-curl": "*",
         "ext-SimpleXML": "*"
     },
-    "require-dev": {
-        "phpunit/phpunit": "4.0.*"
-    },
+
     "autoload": {
-        "psr-0": {"NGS\\": "."}
+        "psr-0": {"NGS": "."}
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.0.0",
+        "dsl-platform/install": "@dev"
+    },
+    "autoload-dev": {
+        "psr-0": {"": "Generated-PHP"}
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "DslPlatform\\Installer::compilePhp",
+            "DslPlatform\\Installer::migrate",
+            "DslPlatform\\Installer::installRevenj",
+            "DslPlatform\\Installer::startRevenj"
+        ]
     }
 }

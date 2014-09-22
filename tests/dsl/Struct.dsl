@@ -5,7 +5,8 @@ module Struct
         int Number;
         LinkedList? *Next; //pointer to the next item in a list
     }
-    snowflake UnrolledList LinkedList
+
+    snowflake UnrolledList from LinkedList
     {
         Number; //if alias is not declared, name of the used property will be used as alias
         Next.Number FirstNumber; //we can navigate through reference properties
