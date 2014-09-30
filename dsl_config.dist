@@ -1,11 +1,11 @@
 {
     "clc_path": ".\/tests\/dsl-clc.jar",
-    "clc_url": "https:\/\/github.com\/ngs-doo\/dsl-compiler-client\/releases\/download\/0.9.8\/dsl-clc.jar",
     "db_server": "localhost",
     "db_port": "5432",
     "db_database": "dsl_client_php_test",
     "db_user": "postgres",
     "db_password": "postgres",
     "dsl_path": ".\/tests\/dsl",
+    "revenj_path": ".\/revenj",
     "revenj_url": "http:\/\/localhost:9550"
 }
