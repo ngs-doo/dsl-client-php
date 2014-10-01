@@ -2,7 +2,7 @@
 namespace NGS\Client;
 
 /**
- * Request object used by {@see NGS\Client\RestHttp}
+ * Request object used by {@see NGS\Client\HttpClient}
  */
 class HttpRequest
 {

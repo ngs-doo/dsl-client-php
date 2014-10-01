@@ -15,8 +15,9 @@ class RootCollectionPropertyTest extends PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        \NGS\Client\StandardProxy::instance()->delete(\Properties\rootCollectionRoot::findAll());
-        \NGS\Client\StandardProxy::instance()->delete(\Properties\rootObject::findAll());
+        $proxy = new \NGS\Client\StandardProxy();
+        $proxy->delete(\Properties\rootCollectionRoot::findAll());
+        $proxy->delete(\Properties\rootObject::findAll());
     }
 
     public function testPersistAndReadRootCollectionProperty()

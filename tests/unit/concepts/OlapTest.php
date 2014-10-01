@@ -19,7 +19,8 @@ class OlapTest extends \PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        StandardProxy::instance()->delete(Foo::findAll());
+        $proxy = new StandardProxy();
+        $proxy->delete(Foo::findAll());
     }
 
     public function testCube()

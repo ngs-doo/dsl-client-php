@@ -7,17 +7,20 @@ class DomainProxyTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        StandardProxy::instance()->delete(Foo::findAll());
+        $proxy = new StandardProxy();
+        $proxy->delete(Foo::findAll());
         $this->items = array(
             new Foo(array('bar' => 'a',  'num' => 1)),
             new Foo(array('bar' => 'ab', 'num' => 2)),
         );
-        StandardProxy::instance()->insert($this->items);
+        $proxy = new StandardProxy();
+        $proxy->insert($this->items);
     }
 
     protected function tearDown()
     {
-        StandardProxy::instance()->delete(Foo::findAll());
+        $proxy = new StandardProxy();
+        $proxy->delete(Foo::findAll());
     }
 
     public function testFindByUrisWithStringKeys()

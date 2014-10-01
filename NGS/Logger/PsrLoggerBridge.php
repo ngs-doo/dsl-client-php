@@ -2,31 +2,31 @@
 namespace NGS;
 
 use Psr\Log\LoggerInterface;
-use NGS\Client\RestHttp;
+use NGS\Client\HttpClient;
 
 class PsrLoggerBridge
 {
     protected $restHttp;
 
-    public function __construct(RestHttp $restHttp = null)
+    public function __construct(HttpClient $restHttp = null)
     {
-        $this->restHttp = ($restHttp === null) ? RestHttp::instance() : $restHttp;
+        $this->restHttp = ($restHttp === null) ? HttpClient::instance() : $restHttp;
     }
 
     public function add(LoggerInterface $logger)
     {
         $this->restHttp->addSubscriber(function ($event, $data) use (&$logger) {
             switch ($event) {
-                case RestHttp::EVENT_REQUEST_BEFORE:
+                case HttpClient::EVENT_REQUEST_BEFORE:
                     $http = $data['request'];
                     $http->logRequest($logger);
                     break;
 
-                case RestHttp::EVENT_REQUEST_ERROR:
+                case HttpClient::EVENT_REQUEST_ERROR:
                     $logger->error($data['error']);
                     break;
 
-                case RestHttp::EVENT_REQUEST_SENT:
+                case HttpClient::EVENT_REQUEST_SENT:
                     $http = $data['request'];
                     $http->logResponse($logger);
                     break;

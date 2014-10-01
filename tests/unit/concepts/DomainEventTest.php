@@ -20,7 +20,7 @@ class DomainEventTest extends BaseTestCase
 
     public function testDomainSubmitEvent()
     {
-        $proxy = DomainProxy::instance();
+        $proxy = new DomainProxy();
         $event = new SomeEvent();
 
         $uri = $proxy->submitEvent($event, $returnInstance=false);

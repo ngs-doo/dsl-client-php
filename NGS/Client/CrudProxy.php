@@ -2,13 +2,11 @@
 namespace NGS\Client;
 
 require_once(__DIR__.'/../Utils.php');
-require_once(__DIR__.'/RestHttp.php');
+require_once(__DIR__ . '/HttpClient.php');
 require_once(__DIR__.'/../Patterns/Repository.php');
 
-use NGS\Name;
 use NGS\Patterns\AggregateRoot;
 use NGS\Patterns\Repository;
-use NGS\Utils;
 
 /**
  * Proxy service to remote CRUD REST-like API.
@@ -25,31 +23,17 @@ class CrudProxy
 {
     const CRUD_URI = 'Crud.svc';
 
-    protected $http;
-
-    protected static $instance;
+    protected $client;
 
     /**
      * Create a new CrudProxy instance
      *
-     * @param RestHttp $http RestHttp instance used for http request.
+     * @param HttpClient $client HttpClient instance used for http request.
      * Optionally specify an instance, otherwise use a singleton instance
      */
-    public function __construct(RestHttp $http = null)
+    public function __construct(HttpClient $client = null)
     {
-        $this->http = $http !== null ? $http : RestHttp::instance();
-    }
-
-    /**
-     * Gets singleton instance of Crud.svc proxy
-     *
-     * @return CrudProxy
-     */
-    public static function instance()
-    {
-        if(self::$instance === null)
-            self::$instance = new CrudProxy();
-        return self::$instance;
+        $this->client = $client !== null ? $client : HttpClient::instance();
     }
 
     /**
@@ -63,14 +47,14 @@ class CrudProxy
     public function create(AggregateRoot $aggregate)
     {
         $class = get_class($aggregate);
-        $name = $this->http->getDslName($class);
+        $name = $this->client->getDslName($class);
         $response =
-            $this->http->sendRequest(
+            $this->client->sendRequest(
                 self::CRUD_URI.'/'.rawurlencode($name),
                 'POST',
                 $aggregate->toJson(),
                 array(201));
-        return RestHttp::parseResult($response, $class);
+        return $this->client->parseResult($response, $class);
     }
 
     /**
@@ -83,15 +67,14 @@ class CrudProxy
     public function update(AggregateRoot $aggregate)
     {
         $class = get_class($aggregate);
-        $name = $this->http->getDslName($class);
+        $name = $this->client->getDslName($class);
         $response =
-            $this->http->sendRequest(
+            $this->client->sendRequest(
                 self::CRUD_URI.'/'.rawurlencode($name).'?uri='.rawurlencode($aggregate->getURI()),
                 'PUT',
                 $aggregate->toJson(),
                 array(200));
-        Repository::instance()->invalidate($class, $aggregate->URI);
-        return RestHttp::parseResult($response, $class);
+        return $this->client->parseResult($response, $class);
     }
 
     /**
@@ -105,15 +88,14 @@ class CrudProxy
      */
     public function delete($class, $uri)
     {
-        $name = $this->http->getDslName($class);
+        $name = $this->client->getDslName($class);
         $response =
-            $this->http->sendRequest(
+            $this->client->sendRequest(
                 self::CRUD_URI.'/'.rawurlencode($name).'?uri='.rawurlencode($uri),
                 'DELETE',
                 null,
                 array(200));
-        Repository::instance()->invalidate($class, $uri);
-        return RestHttp::parseResult($response, $class);
+        return $this->client->parseResult($response, $class);
     }
 
     /**
@@ -126,13 +108,13 @@ class CrudProxy
      */
     public function read($class, $uri)
     {
-        $name = $this->http->getDslName($class);
+        $name = $this->client->getDslName($class);
         $response =
-            $this->http->sendRequest(
+            $this->client->sendRequest(
                 self::CRUD_URI.'/'.rawurlencode($name).'?uri='.rawurlencode($uri),
                 'GET',
                 null,
                 array(200));
-        return RestHttp::parseResult($response, $class);
+        return $this->client->parseResult($response, $class);
     }
 }

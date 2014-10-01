@@ -1,7 +1,7 @@
 <?php
 namespace NGS\Patterns;
 
-use NGS\Client\RestHttp;
+use NGS\Client\HttpClient;
 use NGS\Client\Exception\NotFoundException;
 use NGS\Utils;
 use Memcached;
@@ -14,27 +14,16 @@ class Repository
     // array(class=>array(uri=>object instance))
     private $cache = array();
 
-    /** @var NGS\Client\RestHttp */
+    /** @var \NGS\Client\HttpClient */
     private $http;
     /** @var Memcached Memcached */
     private $memcached;
     private $prefix;
     private static $instance;
 
-    /**
-     * Get or sets static singleton instance
-     */
-    public static function instance(Repository $repository=null)
+    public function __construct(HttpClient $http=null, Memcached $memcached=null, $prefix='')
     {
-        if ($repository === null) {
-            return self::$instance ?: new Repository();
-        }
-        return self::$instance = $repository;
-    }
-
-    public function __construct(RestHttp $http=null, Memcached $memcached=null, $prefix='')
-    {
-        $this->http = $http !== null ? $http : RestHttp::instance();
+        $this->http = $http !== null ? $http : HttpClient::instance();
 
         if ($memcached) {
             $this->memcached = $memcached;

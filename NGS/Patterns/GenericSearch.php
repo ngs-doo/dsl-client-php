@@ -5,6 +5,7 @@ require_once(__DIR__.'/../Converter/PrimitiveConverter.php');
 require_once(__DIR__.'/../Client/DomainProxy.php');
 
 use \NGS\Client\DomainProxy;
+use NGS\Client\HttpClient;
 use \NGS\Converter\PrimitiveConverter;
 use \NGS\Name;
 
@@ -45,6 +46,7 @@ class GenericSearch extends Search
 {
     private $domainObject;
     private $filters;
+    private $client;
 
     private static $filterMap = array(
         'equals' => 0,
@@ -98,12 +100,13 @@ class GenericSearch extends Search
      * @param string $class Existing domain object class name
      * @throws  \InvalidArgumentException If class does not exsit
      */
-    public function __construct($class)
+    public function __construct($class, HttpClient $client = null)
     {
         if (!(class_exists($class))) {
             throw new \InvalidArgumentException('Domain object "'.$class.'" doesnot exist');
         }
         $this->domainObject = $class;
+        $this->client = $client;
     }
 
     public function __call($filter, $params)
@@ -146,8 +149,8 @@ class GenericSearch extends Search
      */
     public function search()
     {
-        return
-            DomainProxy::instance()->searchGeneric(
+        $proxy = new DomainProxy($this->client);
+        return $proxy->searchGeneric(
                 $this->domainObject,
                 $this->filters,
                 $this->limit,
@@ -157,8 +160,8 @@ class GenericSearch extends Search
 
     public function count()
     {
-        return
-            DomainProxy::instance()->countGeneric(
+        $proxy = new DomainProxy($this->client);
+        return $proxy->countGeneric(
                 $this->domainObject,
                 $this->filters);
     }

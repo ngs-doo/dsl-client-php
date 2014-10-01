@@ -1,5 +1,5 @@
 <?php
-use NGS\Client\RestHttp;
+use NGS\Client\HttpClient;
 
 class FailLogListener implements PHPUnit_Framework_TestListener
 {
@@ -7,7 +7,7 @@ class FailLogListener implements PHPUnit_Framework_TestListener
 
     public function __construct ()
     {
-        RestHttp::instance()->addSubscriber(array($this, 'logHttpEvent'));
+        HttpClient::instance()->addSubscriber(array($this, 'logHttpEvent'));
     }
 
     public function logHttpEvent($event, $data)

@@ -2,7 +2,7 @@
 namespace NGS\Client;
 
 require_once(__DIR__.'/../Utils.php');
-require_once(__DIR__.'/RestHttp.php');
+require_once(__DIR__ . '/HttpClient.php');
 require_once(__DIR__.'/../Converter/PrimitiveConverter.php');
 require_once(__DIR__.'/../Patterns/Repository.php');
 
@@ -24,36 +24,19 @@ class DomainProxy
     const DOMAIN_URI = 'Domain.svc';
 
     /**
-     * @var RestHttp Instance of RestHttp client
+     * @var HttpClient Instance of HttpClient used for requests
      */
-    protected $http;
-
-    /**
-     * @var DomainProxy Singleton instance
-     */
-    protected static $instance;
+    protected $client;
 
     /**
      * Create a new DomainProxy instance
      *
-     * @param RestHttp $http RestHttp instance used for http request.
+     * @param $client HttpClient Use specific client context or null for global client instance
      * Optionally specify an instance, otherwise use a singleton instance
      */
-    public function __construct(RestHttp $http = null)
+    public function __construct(HttpClient $client = null)
     {
-        $this->http = $http !== null ? $http : RestHttp::instance();
-    }
-
-    /**
-     * Gets singleton instance of Domain.svc proxy
-     *
-     * @return DomainProxy
-     */
-    public static function instance()
-    {
-        if(self::$instance === null)
-            self::$instance = new DomainProxy();
-        return self::$instance;
+        $this->client = $client !== null ? $client : HttpClient::instance();
     }
 
     /**
@@ -62,7 +45,7 @@ class DomainProxy
      *
      * Example:<br>
      * <code>
-     * $proxy = DomainProxy::instance();
+     * $proxy = new DomainProxy();
      * $proxy->find('Test\\Item', array('uri1', 'uri2'));
      * </code>
      *
@@ -72,15 +55,15 @@ class DomainProxy
      */
     public function find($class, array $uris)
     {
-        $name = $this->http->getDslName($class);
+        $name = $this->client->getDslName($class);
         $body = json_encode(PrimitiveConverter::toStringArray($uris));
         $response =
-            $this->http->sendRequest(
+            $this->client->sendRequest(
                 self::DOMAIN_URI.'/find/'.rawurlencode($name),
                 'PUT',
                 $body,
                 array(200));
-        return RestHttp::parseResult($response, $class);
+        return $this->client->parseResult($response, $class);
     }
 
     /**
@@ -89,7 +72,7 @@ class DomainProxy
      *
      * Example:<br>
      * <code>
-     * $proxy = DomainProxy::instance();
+     * $proxy = new DomainProxy();
      * $proxy->search('Test\\Item', 10, 20, array('title' => true));
      * </code>
      *
@@ -106,15 +89,15 @@ class DomainProxy
         $offset = null,
         array $order = null)
     {
-        $name = $this->http->getDslName($class);
+        $name = $this->client->getDslName($class);
         $lo = QueryString::formatLimitAndOffsetAndOrder($limit, $offset, $order);
         $response =
-            $this->http->sendRequest(
+            $this->client->sendRequest(
                 self::DOMAIN_URI.'/search/'.rawurlencode($name).($lo ? '?'.$lo : ''),
                 'GET',
                 null,
                 array(200));
-        return RestHttp::parseResult($response, $class);
+        return $this->client->parseResult($response, $class);
     }
 
     /**
@@ -123,8 +106,8 @@ class DomainProxy
      *
      * @param string        $class
      * @param Specification $specification Specification instance used for searching
-     * @param type          $limit
-     * @param type          $offset
+     * @param int          $limit
+     * @param int          $offset
      * @param array         $order
      * @return array Array of found objects or empty array if none found
      */
@@ -135,11 +118,11 @@ class DomainProxy
         $offset = null,
         array $order = null)
     {
-        $objectName = $this->http->getDslName($class);
-        $specName = $this->http->getDslModuleName($specification).'+'.$this->http->getDslObjectName($specification);
+        $objectName = $this->client->getDslName($class);
+        $specName = $this->client->getDslModuleName($specification).'+'.$this->client->getDslObjectName($specification);
         $lo = QueryString::formatLimitAndOffsetAndOrder($limit, $offset, $order);
         $response =
-            $this->http->sendRequest(
+            $this->client->sendRequest(
                 self::DOMAIN_URI.'/search/'
                     .rawurlencode($objectName)
                     .'?specification='.rawurlencode($specName)
@@ -147,7 +130,7 @@ class DomainProxy
                 'PUT',
                 $specification->toJson(),
                 array(200));
-        return RestHttp::parseResult($response, $this->http->getClassName($objectName));
+        return $this->client->parseResult($response, $this->client->getClassName($objectName));
     }
 
     /**
@@ -155,10 +138,10 @@ class DomainProxy
      *
      * @param string|IDomainObject $class
      * @param array $filters
-     * @param type $limit
-     * @param type $offset
+     * @param int $limit
+     * @param int $offset
      * @param array $order
-     * @return type
+     * @return array
      */
     public function searchGeneric(
         $class,
@@ -167,36 +150,36 @@ class DomainProxy
         $offset = null,
         array $order = null)
     {
-        $object = $this->http->getDslName($class);
+        $object = $this->client->getDslName($class);
         $lo = QueryString::formatLimitAndOffsetAndOrder($limit, $offset, $order);
         $response =
-            $this->http->sendRequest(
+            $this->client->sendRequest(
                 self::DOMAIN_URI.'/search-generic/'.rawurlencode($object).($lo ? '?'.$lo : ''),
                 'PUT',
                 json_encode($filters),
                 array(200));
-        return RestHttp::parseResult($response, $this->http->getClassName($object));
+        return $this->client->parseResult($response, $this->client->getClassName($object));
     }
 
     /**
      * Count total number of domain objects satisfying conditions in {@see NGS\Patterns\GenericSearch}
      *
-     * @param type $class
+     * @param string $class
      * @param array $filters
-     * @return type
+     * @return int
      */
     public function countGeneric(
         $class,
         array $filters = null)
     {
-        $object = $this->http->getDslName($class);
+        $object = $this->client->getDslName($class);
         $response =
-            $this->http->sendRequest(
+            $this->client->sendRequest(
                 self::DOMAIN_URI.'/count-generic/'.rawurlencode($object),
                 'PUT',
                 json_encode($filters),
                 array(200));
-        return RestHttp::parseResult($response, $this->http->getClassName($object));
+        return $this->client->parseResult($response, $this->client->getClassName($object));
     }
 
     /**
@@ -207,13 +190,13 @@ class DomainProxy
      */
     public function count($class)
     {
-        $name = $this->http->getDslName($class);
-        $response = $this->http->sendRequest(
+        $name = $this->client->getDslName($class);
+        $response = $this->client->sendRequest(
             self::DOMAIN_URI.'/count/'.rawurlencode($name),
             'GET',
             null,
             array(200));
-        $count = RestHttp::parseResult($response);
+        $count = $this->client->parseResult($response);
         return PrimitiveConverter::toInteger($count);
     }
 
@@ -225,15 +208,15 @@ class DomainProxy
      */
     public function countWithSpecification(Specification $specification)
     {
-        $object = $this->http->getDslModuleName($specification);
-        $name = $this->http->getDslObjectName($specification);
+        $object = $this->client->getDslModuleName($specification);
+        $name = $this->client->getDslObjectName($specification);
         $response =
-            $this->http->sendRequest(
+            $this->client->sendRequest(
                 self::DOMAIN_URI.'/count/'.rawurlencode($object).'?specification='.rawurlencode($name),
                 'PUT',
                 $specification->toJson(),
                 array(200));
-        $count = RestHttp::parseResult($response);
+        $count = $this->client->parseResult($response);
         return PrimitiveConverter::toInteger($count);
     }
 
@@ -247,18 +230,18 @@ class DomainProxy
      */
     public function submitEvent(DomainEvent $event, $returnInstance=false)
     {
-        $name = $this->http->getDslName($event);
+        $name = $this->client->getDslName($event);
         $returnResult = $returnInstance ? 'instance' : 'uri';
         $response =
-            $this->http->sendRequest(
+            $this->client->sendRequest(
                 self::DOMAIN_URI.'/submit/'.rawurlencode($name).'?result='.$returnResult,
                 'POST',
                 $event->toJson(),
                 array(201));
         if ($returnInstance) {
-            return RestHttp::parseResult($response, $this->http->getClassName($event));
+            return $this->client->parseResult($response, $this->client->getClassName($event));
         }
-        $uri = RestHttp::parseResult($response);
+        $uri = $this->client->parseResult($response);
         return PrimitiveConverter::toString($uri);
     }
 
@@ -272,15 +255,14 @@ class DomainProxy
      */
     public function submitAggregateEvent(AggregateDomainEvent $event, $uri)
     {
-        $rootName = $this->http->getDslModuleName($event);
-        $eventName = $this->http->getDslObjectName($event);
+        $rootName = $this->client->getDslModuleName($event);
+        $eventName = $this->client->getDslObjectName($event);
         $response =
-            $this->http->sendRequest(
+            $this->client->sendRequest(
                 self::DOMAIN_URI.'/submit/'.rawurlencode($rootName).'/'.rawurlencode($eventName).'?uri='.rawurlencode($uri),
                 'POST',
                 $event->toJson(),
                 array(201));
-        Repository::instance()->invalidate($rootName, $uri);
-        return RestHttp::parseResult($response, $this->http->getClassName($rootName));
+        return $this->client->parseResult($response, $this->client->getClassName($rootName));
     }
 }

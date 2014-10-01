@@ -47,8 +47,8 @@ class TemplaterTest extends \BaseTestCase
 
     public function testReportingProxyFindTemplaterWithoutURI()
     {
-        $expected = '<foo><bar>a</bar><num>1</num></foo>'."\r\n".
-                    '<foo><bar>b</bar><num>2</num></foo>'."\r\n".
+        $expected = '<foo><bar>a</bar><num>1</num></foo>'."\n".
+                    '<foo><bar>b</bar><num>2</num></foo>'."\n".
                     '<foo><bar>c</bar><num>3</num></foo>';
 
         $proxy = new ReportingProxy();
@@ -89,8 +89,8 @@ class TemplaterTest extends \BaseTestCase
 
     public function testTemplaterOlapCube()
     {
-        $expected = '<foo><bar>a</bar><num>[[num]]</num></foo>'."\r\n".
-                    '<foo><bar>b</bar><num>[[num]]</num></foo>'."\r\n".
+        $expected = '<foo><bar>a</bar><num>[[num]]</num></foo>'."\n".
+                    '<foo><bar>b</bar><num>[[num]]</num></foo>'."\n".
                     '<foo><bar>c</bar><num>[[num]]</num></foo>';
         $dimensions = array('bar');
         $facts = array('count', 'total', 'average');

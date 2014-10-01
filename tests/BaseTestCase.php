@@ -41,7 +41,7 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
     public function echoRequests($enabled=true)
     {
         if (!isset(self::$echoLogEnabled))
-            \NGS\Client\RestHttp::instance()->addSubscriber(array($this, 'echoLog'));
+            \NGS\Client\HttpClient::instance()->addSubscriber(array($this, 'echoLog'));
 
         self::$echoLogEnabled = $enabled;
     }

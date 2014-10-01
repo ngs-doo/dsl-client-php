@@ -4,6 +4,7 @@ namespace NGS\Converter;
 require_once(__DIR__.'/ConverterInterface.php');
 require_once(__DIR__.'/../Patterns/IDomainObject.php');
 
+use NGS\Client\HttpClient;
 use NGS\Patterns\IdomainObject;
 
 /**
@@ -52,12 +53,13 @@ class ObjectConverter implements ConverterInterface
      * Converts JSON to object
      *
      * @param  string $json
-     * @return mixed Object instance
+     * @param HttpClient $client
+     * @return mixed
+     * @deprecated No reason to use this, use generated converters
      */
     public static function fromJson($json)
     {
-        $converter = self::getConverter($object, 'Json');
-        return $converter::fromJson($json);
+        return json_decode($json);
     }
 
     /**

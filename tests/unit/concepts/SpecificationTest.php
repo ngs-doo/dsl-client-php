@@ -11,7 +11,8 @@ class SpecificationTest extends BaseTestCase
 
     protected function setUp()
     {
-        StandardProxy::instance()->delete(Foo::findAll());
+        $proxy = new StandardProxy();
+        $proxy->delete(Foo::findAll());
 
         $items = array(
             new Foo(array('bar'=>'abcd')),
@@ -32,7 +33,8 @@ class SpecificationTest extends BaseTestCase
 
     protected function tearDown()
     {
-        StandardProxy::instance()->delete(Foo::findAll());
+        $proxy = new StandardProxy();
+        $proxy->delete(Foo::findAll());
     }
 
     public function testSearchWithLimitAndOffset()
@@ -57,7 +59,7 @@ class SpecificationTest extends BaseTestCase
 
     public function testDomainProxyCount()
     {
-        $proxy = DomainProxy::instance();
+        $proxy = new DomainProxy();
         $this->assertSame(4, $proxy->count('Test\Foo'));
     }
 
@@ -71,7 +73,8 @@ class SpecificationTest extends BaseTestCase
         $spec = new \Blog\Post\findByTitle();
         $spec->query = 'abc';
 
-        $results = DomainProxy::instance()->searchWithSpecification('Blog\PostView', $spec);
+        $proxy = new DomainProxy();
+        $results = $proxy->searchWithSpecification('Blog\PostView', $spec);
 
         $expected = array(new \Blog\PostView(array(
             'URI'     => $post->URI,

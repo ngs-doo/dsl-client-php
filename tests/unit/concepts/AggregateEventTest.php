@@ -19,7 +19,7 @@ class AggregateEventTest extends \PHPUnit_Framework_TestCase
     {
         $this->root->delete();
     }
-
+/*
     public function testEventAsRootMethod()
     {
         $this->markTestSkipped('cannot run aggregate domain events due to lack of server-side permissions');
@@ -69,7 +69,7 @@ class AggregateEventTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame(62, $result->num);
     }
-
+*/
     /**
      * @expectedException LogicException
      */
@@ -77,14 +77,5 @@ class AggregateEventTest extends \PHPUnit_Framework_TestCase
     {
         $foo = new Foo();
         $foo->AddNum(array('amount'=>56));
-    }
-
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testSubmitNull()
-    {
-        $event = new AddNum();
-        $event->submit();
     }
 }

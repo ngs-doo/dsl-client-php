@@ -1,10 +1,6 @@
 <?php
 namespace NGS\Patterns;
 
-require_once(__DIR__.'/../Client/DomainProxy.php');
-
-use NGS\Client\DomainProxy;
-
 /**
  * Domain event represents an meaningful business event that occurred in the system.
  * It is a message that back-end system knows how to process and that will
@@ -33,13 +29,4 @@ use NGS\Client\DomainProxy;
  */
 abstract class DomainEvent
 {
-    /**
-     * Submits event
-     *
-     * @return string Created event URI
-     */
-    public function submit()
-    {
-        return DomainProxy::instance()->submitEvent($this, true);
-    }
 }

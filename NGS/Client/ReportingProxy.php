@@ -2,12 +2,13 @@
 namespace NGS\Client;
 
 require_once(__DIR__.'/../Utils.php');
-require_once(__DIR__.'/RestHttp.php');
+require_once(__DIR__ . '/HttpClient.php');
 require_once(__DIR__.'/QueryString.php');
 
 use NGS\Converter\PrimitiveConverter;
 use NGS\Converter\ObjectConverter;
-use NGS\Name;
+use NGS\Patterns\OlapCube;
+use NGS\Patterns\Snapshot;
 use NGS\Patterns\Specification;
 use NGS\Patterns\GenericSearch;
 
@@ -20,31 +21,17 @@ class ReportingProxy
 {
     const REPORTING_URI = 'Reporting.svc';
 
-    protected $http;
-
-    protected static $instance;
+    protected $client;
 
     /**
      * Create a new ReportingProxy instance
      *
-     * @param RestHttp $http RestHttp instance used for http request.
+     * @param HttpClient $client HttpClient instance used for http request.
      * Optionally specify an instance, otherwise use a singleton instance
      */
-    public function __construct(RestHttp $http = null)
+    public function __construct(HttpClient $client = null)
     {
-        $this->http = $http !== null ? $http : RestHttp::instance();
-    }
-
-    /**
-     * Gets singleton instance of Reporting.svc proxy
-     *
-     * @return ReportingProxy
-     */
-    public static function instance()
-    {
-        if(self::$instance === null)
-            self::$instance = new ReportingProxy();
-        return self::$instance;
+        $this->client = $client !== null ? $client : HttpClient::instance();
     }
 
     /**
@@ -57,14 +44,14 @@ class ReportingProxy
     public function populateReport($report)
     {
         $class = get_class($report);
-        $name = $this->http->getDslName($report);
+        $name = $this->client->getDslName($report);
         $response =
-        $this->http->sendRequest(
+        $this->client->sendRequest(
             self::REPORTING_URI.'/report/'.rawurlencode($name),
             'PUT',
             $report->toJson(),
             array(200));
-        return RestHttp::parseResult($response, $class);
+        return $this->client->parseResult($response, $class);
     }
 
     /**
@@ -77,9 +64,9 @@ class ReportingProxy
      */
     public function createReport($report, $templater)
     {
-        $name = $this->http->getDslName($report);
+        $name = $this->client->getDslName($report);
         return
-            $this->http->sendRequest(
+            $this->client->sendRequest(
                 self::REPORTING_URI.'/report/'.rawurlencode($name).'/'.rawurlencode($templater),
                 'PUT',
                 $report->toJson(),
@@ -93,17 +80,19 @@ class ReportingProxy
      * Analysis is performed by grouping data by dimensions
      * and aggregating information using specified facts.
      *
-     * @param  \NGS\Patterns\OlapCube      $cube
-     * @param  \NGS\Patterns\Specification $specification
-     * @param  string                      $templater
-     * @param  array                       $dimensions
-     * @param  array                       $facts
-     * @param  array                       $order
+     * @param  \NGS\Patterns\OlapCube       $cube
+     * @param  \NGS\Patterns\Specification  $specification
+     * @param  string                       $templater
+     * @param  array                        $dimensions
+     * @param  array                        $facts
+     * @param  array                        $order
+     * @param  int                          $limit
+     * @param  int                          $offset
      * @return string Report contents
      */
     public function olapCubeWithSpecification(
-        $cube,
-        $specification,
+        OlapCube $cube,
+        Specification $specification,
         $templater,
         array $dimensions,
         array $facts,
@@ -111,14 +100,14 @@ class ReportingProxy
         $limit = null,
         $offset = null)
     {
-        $cube = $this->http->getDslName($cube);
-        $name = $this->http->getDslObjectName($specification);
-        $fullName = $this->http->getDslName($specification);
+        $cube = $this->client->getDslName($cube);
+        $name = $this->client->getDslObjectName($specification);
+        $fullName = $this->client->getDslName($specification);
         if(strncmp($fullName, $cube, strlen($cube)) != 0)
             $name = substr($fullName, 0, strlen($fullName) - strlen($name) - 1).'+'.$name;
         $arguments = QueryString::prepareCubeCall($dimensions, $facts, $order, $limit, $offset);
         return
-            $this->http->sendRequest(
+            $this->client->sendRequest(
                 self::REPORTING_URI.'/olap/'.rawurlencode($cube).'/'.rawurlencode($templater).'?specification='.rawurlencode($name).'&'.$arguments,
                 'PUT',
                 $specification->toJson(),
@@ -131,11 +120,13 @@ class ReportingProxy
      * Analysis is performed by grouping data by dimensions
      * and aggregating information using specified facts.
      *
-     * @param \NGS\Patterns\OlapCube $cube
-     * @param  string                      $templater
-     * @param  array                       $dimensions
-     * @param  array                       $facts
-     * @param  array                       $order
+     * @param \NGS\Patterns\OlapCube        $cube
+     * @param  string                       $templater
+     * @param  array                        $dimensions
+     * @param  array                        $facts
+     * @param  array                        $order
+     * @param  int                          $limit
+     * @param  int                          $offset
      * @return string Report contents
      */
     public function olapCube(
@@ -147,11 +138,11 @@ class ReportingProxy
         $limit = null,
         $offset = null)
     {
-        $cube = $this->http->getDslName($cube);
+        $cube = $this->client->getDslName($cube);
         $arguments = QueryString::prepareCubeCall($dimensions, $facts, $order, $limit, $offset);
 
         return
-            $this->http->sendRequest(
+            $this->client->sendRequest(
                 self::REPORTING_URI.'/olap/'.rawurlencode($cube).'/'.rawurlencode($templater).'?'.$arguments,
                 'GET',
                 null,
@@ -187,7 +178,7 @@ class ReportingProxy
             foreach($snapshots as $snapshotItem)
             {
                 $history[] =
-                    new \NGS\Patterns\Snapshot(
+                    new Snapshot(
                         $snapshotItem['At'],
                         $snapshotItem['Action'],
                         $converter::fromArray($snapshotItem['Value']));
@@ -200,10 +191,10 @@ class ReportingProxy
 
     private function getMultipleHistory($class, $uris)
     {
-        $name = $this->http->getDslName($class);
+        $name = $this->client->getDslName($class);
         $body = json_encode(PrimitiveConverter::toStringArray($uris));
         $response =
-            $this->http->sendRequest(
+            $this->client->sendRequest(
                 self::REPORTING_URI.'/history/'.rawurlencode($name),
                 'PUT',
                 $body,
@@ -213,9 +204,9 @@ class ReportingProxy
 
     private function getSingleHistory($class, $uri)
     {
-        $name = $this->http->getDslName($class);
+        $name = $this->client->getDslName($class);
         $response =
-            $this->http->sendRequest(
+            $this->client->sendRequest(
                 self::REPORTING_URI.'/history/'.rawurlencode($name).'/'.rawurlencode($uri),
                 'GET',
                 null,
@@ -238,10 +229,10 @@ class ReportingProxy
         $class,
         $uri=null)
     {
-        $name = $this->http->getDslName($class);
+        $name = $this->client->getDslName($class);
         $uriQuery = $uri!==null ? '/'.$uri : '';
         return
-            $this->http->sendRequest(
+            $this->client->sendRequest(
                 self::REPORTING_URI.'/templater/'.rawurlencode($file).'/'.rawurlencode($name).$uriQuery,
                 'GET',
                 null,
@@ -262,10 +253,10 @@ class ReportingProxy
         $file,
         Specification $specification)
     {
-        $object = $this->http->getDslModuleName($specification);
-        $name = $this->http->getDslObjectName($specification);
+        $object = $this->client->getDslModuleName($specification);
+        $name = $this->client->getDslObjectName($specification);
         return
-            $this->http->sendRequest(
+            $this->client->sendRequest(
                 self::REPORTING_URI.'/templater/'.rawurlencode($file).'/'.rawurlencode($object).'?specification='.rawurlencode($name),
                 'PUT',
                 $specification->toJson(),
@@ -278,16 +269,16 @@ class ReportingProxy
      * {@ses NGS\Patterns\GenericSearch}.
      *
      * @param  string $file  Template file to populate
-     * @param  string \NGS\Patterns\GenericSearch
+     * @param  \NGS\Patterns\GenericSearch $search
      * @return string        Populated template contents
      */
     public function searchTemplaterGeneric(
         $file,
         GenericSearch $search)
     {
-        $object = $this->http->getDslName($search->getObject());
+        $object = $this->client->getDslName($search->getObject());
         return
-            $this->http->sendRequest(
+            $this->client->sendRequest(
                 self::REPORTING_URI.'/templater-generic/'.rawurlencode($file).'/'.rawurlencode($object),
                 'PUT',
                 json_encode($search->getFilters()),

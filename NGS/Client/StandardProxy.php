@@ -2,7 +2,7 @@
 namespace NGS\Client;
 
 require_once(__DIR__.'/../Utils.php');
-require_once(__DIR__.'/RestHttp.php');
+require_once(__DIR__ . '/HttpClient.php');
 require_once(__DIR__.'/../Patterns/Repository.php');
 require_once(__DIR__.'/QueryString.php');
 
@@ -22,31 +22,17 @@ class StandardProxy
     const STANDARD_URI = 'Commands.svc';
     const APPLICATION_URI  = 'RestApplication.svc';
 
-    protected $http;
-
-    protected static $instance;
+    protected $client;
 
     /**
      * Create a new StandardProxy instance
      *
-     * @param RestHttp $http RestHttp instance used for http request.
+     * @param HttpClient $client HttpClient instance used for http request.
      * Optionally specify an instance, otherwise use a singleton instance
      */
-    public function __construct(RestHttp $http = null)
+    public function __construct(HttpClient $client = null)
     {
-        $this->http = $http !== null ? $http : RestHttp::instance();
-    }
-
-    /**
-     * Gets singleton instance of Domain.svc proxy
-     *
-     * @return DomainProxy
-     */
-    public static function instance()
-    {
-        if(self::$instance === null)
-            self::$instance = new StandardProxy();
-        return self::$instance;
+        $this->client = $client !== null ? $client : HttpClient::instance();
     }
 
     /**
@@ -60,7 +46,7 @@ class StandardProxy
         if(empty($aggregates))
             return array();
         $response = $this->persist('POST', $aggregates);
-        return RestHttp::parseResult($response);
+        return $this->client->parseResult($response);
     }
 
     private static function invalidate(array $aggregates)
@@ -69,7 +55,6 @@ class StandardProxy
         foreach($aggregates as $root) {
             $uris[] = $root->URI;
         }
-        Repository::instance()->invalidate(get_class($aggregates[0]), $uris);
     }
 
     /**
@@ -95,7 +80,7 @@ class StandardProxy
     public function delete(array $aggregates)
     {
         if(empty($aggregates))
-            return ;
+            return null;
         if(!is_object($aggregates[0]))
             throw new InvalidArgumentException("Could not delete aggregates. First element was not an object.");
         $class = get_class($aggregates[0]);
@@ -109,13 +94,13 @@ class StandardProxy
         }
         $converter = ObjectConverter::getConverter($class, ObjectConverter::JSON_TYPE);
         $body = array(
-            'RootName' => $this->http->getDslName($class),
+            'RootName' => $this->client->getDslName($class),
             // 'ToDelete' is json encoded inside json
             'ToDelete' => $converter::toJson($aggregates)
         );
         $body = json_encode($body);
 
-        $result = $this->http->sendRequest(
+        $result = $this->client->sendRequest(
             self::APPLICATION_URI.'/PersistAggregateRoot',
             'POST',
             $body,
@@ -127,10 +112,10 @@ class StandardProxy
     private function persist($method, array $aggregates)
     {
         $class = get_class($aggregates[0]);
-        $name = $this->http->getDslName($class);
+        $name = $this->client->getDslName($class);
         $values = array_map(function($it) { return $it->toArray(); }, $aggregates);
         return
-            $this->http->sendRequest(
+            $this->client->sendRequest(
                 self::STANDARD_URI.'/persist/'.rawurlencode($name),
                 $method,
                 json_encode($values),
@@ -151,19 +136,19 @@ class StandardProxy
         $limit = null,
         $offset = null)
     {
-        $cube = $this->http->getDslName($cube);
-        $name = $this->http->getDslObjectName($specification);
-        $fullName = $this->http->getDslName($specification);
+        $cube = $this->client->getDslName($cube);
+        $name = $this->client->getDslObjectName($specification);
+        $fullName = $this->client->getDslName($specification);
         if(strncmp($fullName, $cube, strlen($cube)) != 0)
             $name = substr($fullName, 0, strlen($fullName) - strlen($name) - 1).'+'.$name;
         $arguments = QueryString::prepareCubeCall($dimensions, $facts, $order, $limit, $offset);
         $response =
-            $this->http->sendRequest(
+            $this->client->sendRequest(
                 self::STANDARD_URI.'/olap/'.rawurlencode($cube).'?specification='.rawurlencode($name).'&'.$arguments,
                 'PUT',
                 $specification->toJson(),
                 array(201));
-        return RestHttp::parseResult($response);
+        return $this->client->parseResult($response);
     }
 
     /**
@@ -177,15 +162,15 @@ class StandardProxy
         $limit = null,
         $offset = null)
     {
-        $cube = $this->http->getDslName($cube);
+        $cube = $this->client->getDslName($cube);
         $arguments = QueryString::prepareCubeCall($dimensions, $facts, $order, $limit, $offset);
         $response =
-            $this->http->sendRequest(
+            $this->client->sendRequest(
                 self::STANDARD_URI.'/olap/'.rawurlencode($cube).'?'.$arguments,
                 'GET',
                 null,
                 array(201));
-        return RestHttp::parseResult($response);
+        return $this->client->parseResult($response);
     }
 
     /**
@@ -204,11 +189,11 @@ class StandardProxy
             throw new InvalidArgumentException("Execute body must be array or string");
 
         $response =
-            $this->http->sendRequest(
+            $this->client->sendRequest(
                 self::STANDARD_URI.'/execute/'.rawurlencode($service),
                 'POST',
                 $body,
                 array(200, 201));
-        return RestHttp::parseResult($response);
+        return $this->client->parseResult($response);
     }
 }

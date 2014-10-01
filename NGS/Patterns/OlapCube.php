@@ -1,12 +1,12 @@
 <?php
 namespace NGS\Patterns;
 
-require_once(__DIR__.'/../Client/RestHttp.php');
+require_once(__DIR__ . '/../Client/HttpClient.php');
 require_once(__DIR__.'/../Client/StandardProxy.php');
 require_once(__DIR__.'/Specification.php');
 require_once(__DIR__.'/CubeBuilder.php');
 
-use \NGS\Client\RestHttp;
+use \NGS\Client\HttpClient;
 use \NGS\Client\StandardProxy;
 use \NGS\Patterns\Specification;
 use \NGS\Patterns\CubeBuilder;
@@ -14,9 +14,9 @@ use \NGS\Patterns\CubeBuilder;
 abstract class OlapCube
 {
     /**
-     * @var \Ngs\Client\RestHttp
+     * @var \Ngs\Client\HttpClient
      */
-    protected $restHttp;
+    protected $__client__;
 
     /**
      * @return array Get available dimensions
@@ -31,14 +31,11 @@ abstract class OlapCube
     /**
      * Constructs object using target server proxy
      *
-     * @param \NGS\Client\RestHttp|void $restHttp to target server used for analysis
+     * @param \NGS\Client\HttpClient|null $client Client instance or null
      */
-    public function __construct(RestHttp $restHttp = null)
+    public function __construct(HttpClient $client = null)
     {
-        if ($restHttp === null) {
-            $restHttp = RestHttp::instance();
-        }
-        $this->restHttp = $restHttp;
+        $this->__client__ = $client;
     }
 
     public function builder()
@@ -59,7 +56,7 @@ abstract class OlapCube
         $limit = null,
         $offset = null)
     {
-        $proxy = new StandardProxy($this->restHttp);
+        $proxy = new StandardProxy($this->__client__);
         return $specification === null
             ? $proxy->olapCube($this, $dimensions, $facts, $order, $limit, $offset)
             : $proxy->olapCubeWithSpecification($this, $specification, $dimensions, $facts, $order, $limit, $offset);

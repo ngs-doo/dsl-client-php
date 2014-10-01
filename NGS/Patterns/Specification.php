@@ -2,10 +2,6 @@
 namespace NGS\Patterns;
 
 require_once(__DIR__.'/IDomainObject.php');
-require_once(__DIR__.'/../Client/DomainProxy.php');
-
-use NGS\Client\DomainProxy;
-use NGS\Name;
 
 /**
  * Search predicate which can be used to filter domain objects from the remote server.
@@ -33,39 +29,4 @@ use NGS\Name;
  */
 abstract class Specification implements IDomainObject
 {
-    /**
-     * Search domain object using conditions in specification
-     *
-     * @param type $limit
-     * @param type $offset
-     * @param array $order
-     * @return array Array of found objects, or empty array if none found
-     */
-    public function search($limit = null, $offset = null, array $order = null)
-    {
-        $class = get_class($this);
-        $target = substr($class, 0, strrpos($class, '\\'));
-        return DomainProxy::instance()->searchWithSpecification($target, $this, $limit, $offset, $order);
-    }
-
-    /**
-     * Count domain object using conditions in specification
-     *
-     * @return type
-     */
-    public function count()
-    {
-        return DomainProxy::instance()->countWithSpecification($this);
-    }
-
-    /**
-     * Creates an instance of SearchBuilder from specification.
-     *
-     * @see NGS\Patterns\SearchBuilder
-     * @return \NGS\Patterns\SearchBuilder
-     */
-    public function builder()
-    {
-        return new SearchBuilder($this);
-    }
 }

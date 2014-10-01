@@ -9,12 +9,14 @@ class LinkedListTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        StandardProxy::instance()->delete(LinkedList::findAll());
+        $proxy = new StandardProxy();
+        $proxy->delete(LinkedList::findAll());
     }
 
     public function tearDown()
     {
-        StandardProxy::instance()->delete(LinkedList::findAll());
+        $proxy = new StandardProxy();
+        $proxy->delete(LinkedList::findAll());
     }
 
     public function testList()

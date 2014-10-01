@@ -27,7 +27,7 @@ use NGS\Converter\ObjectConverter;
  * Should not be used directly, instead use domain patterns
  * Requests can be monitored via {@see addSubscriber}
  */
-class RestHttp
+class HttpClient
 {
     const EVENT_REQUEST_BEFORE    = 'request.before';
     const EVENT_REQUEST_SENT      = 'request.sent';
@@ -62,20 +62,20 @@ class RestHttp
     protected $lastResponse;
 
     /**
-     * @var RestHttp Singleton instance
+     * @var HttpClient Singleton instance
      */
     protected static $instance;
 
     /**
      * Creates new client instance
      *
-     * @param string $service Service base url
+     * @param string $apiUrl Service base url
      * @param string $username
      * @param string $password
      */
-    public function __construct($service, $username=null, $password=null)
+    public function __construct($apiUrl, $username=null, $password=null)
     {
-        $this->service = $service;
+        $this->service = $apiUrl;
         if ($username!==null && $password!==null) {
             $this->setAuth($username, $password);
         }
@@ -105,10 +105,10 @@ class RestHttp
     /**
      * Gets or sets singleton instance of rest Http
      *
-     * @param RestHttp
-     * @return RestHttp
+     * @param HttpClient $client HttpClient instance
+     * @return HttpClient
      */
-    public static function instance(RestHttp $http = null)
+    public static function instance(HttpClient $http = null)
     {
         if($http === null)
             return self::$instance;
@@ -245,12 +245,12 @@ class RestHttp
         }
     }
 
-    public static function parseResult($response, $class = null)
+    public function parseResult($response, $class = null)
     {
         $data = json_decode($response, true);
         if($class !== null && is_array($data)) {
             $converter = ObjectConverter::getConverter($class);
-            return $converter::fromJson($response);
+            return $converter::fromJson($response, $this);
         }
         return $data;
     }
@@ -265,9 +265,9 @@ class RestHttp
      *
      * Example use for simple logging:<br>
      * <code>
-     * $http = RestHttp::instance();
+     * $http = HttpClient::instance();
      * $http->addSubscriber(function($event, $context) {
-     *     if ($event === RestHttp::EVENT_REQUEST_SENT) {
+     *     if ($event === HttpClient::EVENT_REQUEST_SENT) {
      *         echo 'request sent';
      *         print_r($context);
      *     }

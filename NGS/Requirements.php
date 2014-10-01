@@ -24,7 +24,7 @@ require_once __DIR__.'/Client/CrudProxy.php';
 require_once __DIR__.'/Client/DomainProxy.php';
 require_once __DIR__.'/Client/HttpRequest.php';
 require_once __DIR__.'/Client/ReportingProxy.php';
-require_once __DIR__.'/Client/RestHttp.php';
+require_once __DIR__.'/Client/HttpClient.php';
 require_once __DIR__.'/Client/StandardProxy.php';
 
 require_once __DIR__.'/Converter/ConverterInterface.php';

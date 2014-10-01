@@ -11,7 +11,8 @@ class SearchTest extends \BaseTestCase
 
     protected function setUp()
     {
-        StandardProxy::instance()->delete(FooFoo::findAll());
+        $proxy = new StandardProxy();
+        $proxy->delete(FooFoo::findAll());
 
         $this->items = array(
             new FooFoo(array('bar' => 'a',  'num' => 1)),
@@ -19,12 +20,14 @@ class SearchTest extends \BaseTestCase
             new FooFoo(array('bar' => 'c',  'num' => 2)),
             new FooFoo(array('bar' => 'b',  'num' => 3))
         );
-        StandardProxy::instance()->insert($this->items);
+        $proxy = new StandardProxy();
+        $proxy->insert($this->items);
     }
 
     protected function tearDown()
     {
-        StandardProxy::instance()->delete(FooFoo::findAll());
+        $proxy = new StandardProxy();
+        $proxy->delete(FooFoo::findAll());
     }
 
     public function testSearchWithLimitAndOffset()

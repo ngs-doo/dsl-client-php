@@ -18,8 +18,8 @@ $url = $config['revenj_url'];
 if (substr($url, strlen($url)-1) !== '/')
     $url .= '/';
 
-$client = new NGS\Client\RestHttp($url, 'revenj', 'revenj');
-NGS\Client\RestHttp::instance($client);
+$client = new NGS\Client\HttpClient($url, 'revenj', 'revenj');
+NGS\Client\HttpClient::instance($client);
 
 $documents = array('template.txt' => '/template.txt');
 foreach ($documents as $src => $dest) {

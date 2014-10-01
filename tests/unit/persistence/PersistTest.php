@@ -35,14 +35,16 @@ class PersistTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        StandardProxy::instance()->delete(ItemHolder::findAll());
-        StandardProxy::instance()->delete(Item::findAll());
+        $proxy = new StandardProxy();
+        $proxy->delete(ItemHolder::findAll());
+        $proxy->delete(Item::findAll());
     }
 
     public function tearDown()
     {
-        StandardProxy::instance()->delete(ItemHolder::findAll());
-        StandardProxy::instance()->delete(Item::findAll());
+        $proxy = new StandardProxy();
+        $proxy->delete(ItemHolder::findAll());
+        $proxy->delete(Item::findAll());
     }
 
     /**
