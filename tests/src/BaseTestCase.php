@@ -16,7 +16,7 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
 
     public function getFixturesPath()
     {
-        return __DIR__.'/fixtures';
+        return __DIR__.'/../fixtures';
     }
 
     public function getFile($file)

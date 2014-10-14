@@ -4,6 +4,9 @@
          bootstrap="tests/bootstrap.php.dist"
 >
     <testsuites>
+        <testsuite name="client">
+            <directory>./tests/unit/client/</directory>
+        </testsuite>
         <testsuite name="concepts">
             <directory>./tests/unit/concepts/</directory>
         </testsuite>

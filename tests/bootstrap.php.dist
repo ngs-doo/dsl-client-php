@@ -7,7 +7,8 @@ if (!is_file($autoloadPath))
     throw new InvalidArgumentException('vendor/autoload.php file was not found! Did you run \'composer install/update\'?');
 require_once $autoloadPath;
 
-require_once __DIR__.'/BaseTestCase.php';
+require_once __DIR__.'/src/BaseTestCase.php';
+require_once __DIR__.'/src/FaultyClient.php';
 
 $dsl_config = __DIR__.'/../dsl_config.json';
 if (!is_file($dsl_config))

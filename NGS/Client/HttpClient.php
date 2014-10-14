@@ -23,7 +23,7 @@ use NGS\Converter\PrimitiveConverter;
 use NGS\Converter\ObjectConverter;
 
 /**
- * HTTP client used communication with platform
+ * HTTP client used for communication with platform
  * Should not be used directly, instead use domain patterns
  * Requests can be monitored via {@see addSubscriber}
  */
@@ -38,7 +38,7 @@ class HttpClient
     /**
      * @var string
      */
-    protected $service;
+    protected $apiUrl;
 
     /**
      * @var string
@@ -75,7 +75,7 @@ class HttpClient
      */
     public function __construct($apiUrl, $username=null, $password=null)
     {
-        $this->service = $apiUrl;
+        $this->apiUrl = $apiUrl;
         if ($username!==null && $password!==null) {
             $this->setAuth($username, $password);
         }
@@ -105,7 +105,8 @@ class HttpClient
     /**
      * Gets or sets singleton instance of rest Http
      *
-     * @param HttpClient $client HttpClient instance
+     * @param HttpClient $http
+     * @internal param \NGS\Client\HttpClient $client HttpClient instance
      * @return HttpClient
      */
     public static function instance(HttpClient $http = null)
@@ -140,7 +141,7 @@ class HttpClient
             $options[CURLOPT_CAINFO] = $this->certPath;
         }
 
-        $request = new HttpRequest($this->service.$uriSegment, $method, null, null, $options);
+        $request = new HttpRequest($this->apiUrl.$uriSegment, $method, null, null, $options);
 
         $requestHeaders = array(
             'Accept: '.$accept,
@@ -210,7 +211,6 @@ class HttpClient
                 $message .= 'Curl error: '.$curlError;
             }
 
-            $ex = false;
             switch($httpCode) {
                 case 400:
                     $ex = new InvalidRequestException($message, $httpCode);
@@ -250,7 +250,7 @@ class HttpClient
         $data = json_decode($response, true);
         if($class !== null && is_array($data)) {
             $converter = ObjectConverter::getConverter($class);
-            return $converter::fromJson($response, $this);
+            return $converter::fromJson($response, false, $this);
         }
         return $data;
     }
@@ -308,7 +308,9 @@ class HttpClient
     /**
      * Set namespace prefix of generated modules
      *
-     * @param string $namespace
+     * @param null $prefix
+     * @throws \InvalidArgumentException
+     * @internal param string $namespace
      */
     public function setNamespacePrefix($prefix=null)
     {
@@ -338,6 +340,7 @@ class HttpClient
      * Gets DSL name from class or object instance
      *
      * @param string|object $name Fully qualified class name or object instance
+     * @throws \InvalidArgumentException
      * @return string DSL name
      */
     public function getDslName($name)
@@ -366,7 +369,8 @@ class HttpClient
     /**
      * Gets class name from DSL name
      *
-     * @param string $dslName Fully qualified class name or object instance
+     * @param string $name Fully qualified class name or object instance
+     * @throws \InvalidArgumentException
      * @return string DSL name
      */
     public function getClassName($name)
