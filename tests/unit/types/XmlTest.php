@@ -14,7 +14,7 @@ class XmlTest extends BaseTestCase
             array('ampersands.xml'),
         );
     }
-    
+
     public static function providerInvalid()
     {
         return array(
@@ -58,7 +58,7 @@ class XmlTest extends BaseTestCase
             else
                 $val[1] =  "<?xml version=\"1.0\"?>\n".$val[1]."\n";
         }
-        
+
         foreach (self::providerXmlFiles() as $data) {
             $content = file_get_contents($this->getFile($data[0]));
             $xmls[] = array($content, $content);
@@ -111,7 +111,7 @@ class XmlTest extends BaseTestCase
 
         $this->assertSame($expected, $this->formatXml($xmlFromArr));
     }
-    
+
     public function testFromArrayEscapesAmpersands()
     {
         $source = array(
@@ -129,7 +129,7 @@ class XmlTest extends BaseTestCase
         $xmlFromString = XmlConverter::toXml($expectedXml);
         $this->assertSame($expectedXml, $xmlFromString->asXML());
     }
-    
+
     /**
      * @dataProvider providerValid
      */
@@ -138,30 +138,30 @@ class XmlTest extends BaseTestCase
         $item = new Test\Elem();
         $item->data = $xmlContent;
         $oldXml = $item->data;
-        
+
         $item->persist();
-        
+
         $fetched = Test\Elem::find($item->URI);
-        
+
         $this->assertSame($this->formatXml($oldXml), $this->formatXml($fetched->data));
-        
+
         $item->delete();
     }
-    
+
     public function testSingleElement()
     {
         $str = "<singleRoot>text</singleRoot>";
         $arr = array('singleRoot' => 'text');
-        $arr2 = array('singleRoot' => array('#text' => 'text'));        
-        
+        $arr2 = array('singleRoot' => array('#text' => 'text'));
+
         $xml1 = XmlConverter::toXml($str);
         $xml2 = XmlConverter::toXml($arr);
         $xml3 = XmlConverter::toXml($arr2);
-        
+
         $this->assertEquals($xml1, $xml2);
         $this->assertEquals($xml2, $xml3);
     }
-    
+
     private function formatXml(SimpleXMLElement $xml)
     {
         $dom = new DOMDocument('1.0');

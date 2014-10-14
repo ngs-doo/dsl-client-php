@@ -186,7 +186,7 @@ class CubeBuilder
     /**
      * Limit resulting rows
      *
-     * @param $limit 
+     * @param $limit
      * @return $this
      */
     public function limit($limit)
@@ -194,10 +194,10 @@ class CubeBuilder
         $this->limit = PrimitiveConverter::toInteger($limit);
         return $this;
     }
-    
+
     /**
      * Offset results
-     * 
+     *
      * @param $offset
      * @return $this
      */

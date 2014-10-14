@@ -122,7 +122,7 @@ class UUID
      * Version 4 UUIDs are pseudo-random.
      * The form is following: xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
      * where x is any hexadecimal digit and y is one of 8, 9, A, or B
-     * 
+     *
      * @return string
      */
     private static function _v4()

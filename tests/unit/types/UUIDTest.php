@@ -80,7 +80,7 @@ class UUIDTest extends PHPUnit_Framework_TestCase
     {
         $foo = new UUID($val);
     }
-    
+
     public function testToArray()
     {
         $strings = array_map(function($val) { return $val[0]; } , $this->providerUidsV4());

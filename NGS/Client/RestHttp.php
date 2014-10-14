@@ -80,7 +80,7 @@ class RestHttp
             $this->setAuth($username, $password);
         }
     }
-    
+
     /**
      * Set username/password used for http authentication
      *
@@ -304,7 +304,7 @@ class RestHttp
     {
         return !empty($this->subscribers);
     }
-        
+
     /**
      * Set namespace prefix of generated modules
      *
@@ -333,10 +333,10 @@ class RestHttp
     {
         return $this->namespacePrefix;
     }
-    
+
     /**
      * Gets DSL name from class or object instance
-     * 
+     *
      * @param string|object $name Fully qualified class name or object instance
      * @return string DSL name
      */
@@ -365,7 +365,7 @@ class RestHttp
 
     /**
      * Gets class name from DSL name
-     * 
+     *
      * @param string $dslName Fully qualified class name or object instance
      * @return string DSL name
      */
@@ -384,7 +384,7 @@ class RestHttp
             ? $this->namespacePrefix.'\\'.str_replace('.', '\\', $name)
             : str_replace('.', '\\', $name);
     }
-    
+
     /**
      * Gets DSL name without module
      *
@@ -409,8 +409,7 @@ class RestHttp
      *
      * @param string|object $name Fully qualified class name or object instance
      * @return string DSL name
-     * @throws \InvalidArgumentExc    /**
-eption If $name is not a string/object
+     * @throws \InvalidArgumentException If $name is not a string/object
      */
     public function getDslModuleName($name)
     {
@@ -418,12 +417,12 @@ eption If $name is not a string/object
         array_pop($names);
         return implode('.', $names);
     }
-    
+
     private static function isDslName($name)
     {
         return strpos($name, '.') !== false;
     }
-    
+
     private static function isClassName($name)
     {
         return strpos($name, '\\') !== false;

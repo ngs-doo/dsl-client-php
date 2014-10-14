@@ -308,5 +308,4 @@ class S3
     {
         return (string)UUID::v4();
     }
-
 };

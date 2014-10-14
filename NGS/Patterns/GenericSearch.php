@@ -106,8 +106,6 @@ class GenericSearch extends Search
         $this->domainObject = $class;
     }
 
-
-
     public function __call($filter, $params)
     {
         if (count($params)<2) {

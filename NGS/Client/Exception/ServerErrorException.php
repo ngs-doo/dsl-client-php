@@ -8,5 +8,4 @@ require_once(__DIR__.'/RequestException.php');
  */
 class ServerErrorException extends RequestException
 {
-
 }

@@ -74,7 +74,7 @@ abstract class XmlConverter
         } else {
             $text = '';
         }
-        
+
         $str = '<'.$name.'>'.$text.'</'.$name.'>';
         $xml = new \SimpleXmlElement($str);
 

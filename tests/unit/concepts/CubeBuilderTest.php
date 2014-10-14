@@ -18,7 +18,7 @@ class CubeBuilderTest extends \PHPUnit_Framework_TestCase
             ->desc('count')
             ->desc('total');
     }
-    
+
     public function invalidDimensionsAndFacts()
     {
         return array(
@@ -56,9 +56,9 @@ class CubeBuilderTest extends \PHPUnit_Framework_TestCase
     public function testCubeBuilderAnalyze()
     {
         $this->persistTestData();
-        
+
         $builder = static::createBuilder();
-      
+
         $rows = $builder->analyze();
 
         $expectedRows = array(
@@ -69,16 +69,16 @@ class CubeBuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(3, count($rows));
         $this->assertSame($expectedRows, $rows);
     }
-    
+
     public function testCubeBuilderAnalyzeWithOrder()
     {
         $this->persistTestData();
-        
+
         $builder = static::createBuilder()
             ->asc('count')
             ->desc('total');
         $rows = $builder->analyze();
-        
+
         $expectedRows = array(
             array('num' => 3, 'count' => 1, 'total' => 3),
             array('num' => 1, 'count' => 1, 'total' => 1),
@@ -93,12 +93,12 @@ class CubeBuilderTest extends \PHPUnit_Framework_TestCase
     public function testCubeBuildeAnalyzeWithLimitAndOffset()
     {
         $this->persistTestData();
-        
+
         $builder = static::createBuilder();
         $builder->limit(1)->offset(1);
         $rows = $builder->analyze();
         $this->assertSame(1, count($rows));
-        
+
         $this->tearDownPersist();
     }
 

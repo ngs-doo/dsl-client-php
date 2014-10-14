@@ -182,7 +182,7 @@ module Test
     {
         string v2;
     }
-		
+
     enum en;
 
     root EnumFoo

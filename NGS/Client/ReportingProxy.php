@@ -149,7 +149,7 @@ class ReportingProxy
     {
         $cube = $this->http->getDslName($cube);
         $arguments = QueryString::prepareCubeCall($dimensions, $facts, $order, $limit, $offset);
-        
+
         return
             $this->http->sendRequest(
                 self::REPORTING_URI.'/olap/'.rawurlencode($cube).'/'.rawurlencode($templater).'?'.$arguments,

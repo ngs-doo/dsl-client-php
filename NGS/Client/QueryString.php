@@ -20,7 +20,7 @@ abstract class QueryString
         }
         return 'limit='.$limit;
     }
-    
+
     private static function prepareOffset($offset)
     {
         $offset = $offset === null ? null : PrimitiveConverter::toInteger($offset);
@@ -29,7 +29,7 @@ abstract class QueryString
         }
         return 'offset='.$offset;
     }
-    
+
     /**
      * Serializes cube parameters into a query string
      *
@@ -67,7 +67,7 @@ abstract class QueryString
         if ($offset = static::prepareOffset($offset)) {
             $params[] = $offset;
         }
-        
+
         if (!$params) {
             throw new \InvalidArgumentException('Cube must have at least one argument');
         }

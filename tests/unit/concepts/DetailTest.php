@@ -12,7 +12,7 @@ class DetailTest extends \BaseTestCase
         $this->deleteAll('Store\Group');
         $this->deleteAll('Store\Package');
     }
-    
+
     public function testDetail()
     {
         $group = new Group(array('Name'=>'test'));
@@ -37,7 +37,7 @@ class DetailTest extends \BaseTestCase
 
         $foundProd = Product::find($prod->URI);
         $this->assertEquals(array($package), $foundProd->Packages);
-        
+
         $itemReloaded = Group::find($group->URI);
 
         $this->assertEquals($package, $itemReloaded->Products[0]->Packages[0]);

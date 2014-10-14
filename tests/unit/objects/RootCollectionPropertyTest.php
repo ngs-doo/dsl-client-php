@@ -29,7 +29,7 @@ class RootCollectionPropertyTest extends PHPUnit_Framework_TestCase
         $obj->itemsNull = $roots;
         $obj->itemsSnap = $roots;
         $obj->persist();
-        
+
         $loaded = \Properties\rootCollectionRoot::find($obj->URI);
 
         $this->assertEquals($uris, $obj->itemsURI);
@@ -45,7 +45,7 @@ class RootCollectionPropertyTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($roots, $loaded->itemsNull);
         $this->assertEquals($roots, $loaded->itemsSnap);
     }
-    
+
     public function testPropertyIsset()
     {
         $obj = new \Properties\rootCollectionRoot();

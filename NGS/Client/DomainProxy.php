@@ -6,7 +6,6 @@ require_once(__DIR__.'/RestHttp.php');
 require_once(__DIR__.'/../Converter/PrimitiveConverter.php');
 require_once(__DIR__.'/../Patterns/Repository.php');
 
-
 use NGS\Converter\PrimitiveConverter;
 use NGS\Name;
 use NGS\Patterns\AggregateDomainEvent;
@@ -284,5 +283,4 @@ class DomainProxy
         Repository::instance()->invalidate($rootName, $uri);
         return RestHttp::parseResult($response, $this->http->getClassName($rootName));
     }
-
 }

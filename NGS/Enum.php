@@ -8,31 +8,31 @@ abstract class Enum
     {
         return __CLASS__;
     }
-    
+
     // gets actual derived class (late static binding)
     protected static function getClass()
     {
         return static::getStaticClass();
     }
-    
+
     public static function isValid($label)
     {
         return defined(static::getClass().'::'.$label);
     }
-    
+
     /**
      * Get all enum values, overriden in generated class
-     * 
+     *
      * @return array
      */
     public static function getValues()
     {
         return array();
     }
-    
+
     /**
      * Returns enum value from string
-     * 
+     *
      * @param type $value
      * @return type
      * @throws \InvalidArgumentException
@@ -47,10 +47,10 @@ abstract class Enum
         }
         return $value;
     }
-    
+
     /**
      * Returns array of enum values from string
-     * 
+     *
      * @param type $value
      * @return type
      * @throws \InvalidArgumentException

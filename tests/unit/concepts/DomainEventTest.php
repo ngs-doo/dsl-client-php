@@ -17,16 +17,16 @@ class DomainEventTest extends BaseTestCase
 
         $this->assertEquals($event, array_pop($ev));
     }
-    
+
     public function testDomainSubmitEvent()
     {
         $proxy = DomainProxy::instance();
         $event = new SomeEvent();
-        
+
         $uri = $proxy->submitEvent($event, $returnInstance=false);
         $this->assertNull($event->URI);
         $this->assertInternalType('string', $uri);
-        
+
         $eventFromServer = $proxy->submitEvent($event, $returnInstance=true);
         $this->assertInstanceOf(get_class($event), $eventFromServer);
         $this->assertInternalType('string', $eventFromServer->URI);
