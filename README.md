@@ -39,6 +39,38 @@ List of documentation resources:
 - [Intermediate tutorial][5]
 - [Advanced tutorial][6]
 
+## Installing on Windows
+
+### Instaling PHP
+
+Download [PHP for Windows](http://windows.php.net/download/) and unpack to desired folder, we'll use `c:\php`. From there, run `php.exe --version` in command prompt.
+If you get the message about missing MSVCR110.dll, you'll need to install [VS C++ 2012, x86 version](http://www.microsoft.com/en-us/download/details.aspx?id=30679).
+
+In your php folder, copy php-development.ini to php.ini. Edit php.ini and add the following lines: (or find them and uncomment)
+
+    extension=c:/php/ext/php_openssl.dll
+    extension=c:/php/ext/php_curl.dll
+    extension=c:/php/ext/php_mbstring.dll
+    ; set this to your timezone
+    date.timezone = CET
+
+Download CA bundle for from [http://curl.haxx.se/ca/cacert.pem](http://curl.haxx.se/ca/cacert.pem) and set its location to php.ini:
+
+    curl.cainfo = "c:/php/curl/cacert.pem"
+
+Download and run [Composer setup](https://getcomposer.org/Composer-Setup.exe). Setup will add composer to your PATH variable. Now you can create dsl-client-php project from command-line:
+
+    composer create-project dsl-platform/client -s dev
+
+Project will be created in a folder named 'client'. Change to folder and start Revenj with:
+
+    revenj\Revenj.Http.exe
+    
+To execute tests, run phpunit:
+    
+    vendor\bin\phpunit
+    
+
 [1]: https://dsl-platform.com
 [2]: https://docs.dsl-platform.com/php-introduction
 [3]: https://docs.dsl-platform.com/php-setup-guide
