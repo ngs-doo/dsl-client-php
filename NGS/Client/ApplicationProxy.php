@@ -54,14 +54,14 @@ class ApplicationProxy
      * When remote service requires an argument, message with serialized payload will be sent.
      *
      * @param string $command
-     * @param array  $data
+     * @param mixed  $data
      * @param array  $expectedCode
      * @param string $accept
      * @return mixed
      */
     public function post(
         $command,
-        array $data = null,
+        $data = null,
         array $expectedCode = array(200),
         $accept = 'application/json')
     {
