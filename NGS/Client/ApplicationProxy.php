@@ -14,22 +14,9 @@ use NGS\Name;
  *
  * @package NGS\Client
  */
-class ApplicationProxy
+class ApplicationProxy extends BaseProxy
 {
     const APPLICATION_URI = 'RestApplication.svc';
-
-    protected $client;
-
-    /**
-     * Create a new ApplicationProxy instance
-     *
-     * @param HttpClient $client HttpClient instance used for http request.
-     * Optionally specify an instance, otherwise use a singleton instance
-     */
-    public function __construct(HttpClient $client = null)
-    {
-        $this->client = $client !== null ? $client : HttpClient::instance();
-    }
 
     /**
      * If remote service doesn't require any arguments it can be called using get method.

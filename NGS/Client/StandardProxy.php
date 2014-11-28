@@ -17,23 +17,10 @@ use NGS\Utils;
  * data analysis, and remote service calls counting and event sourcing.
  * It is preferred to use domain patterns instead of this proxy service.
  */
-class StandardProxy
+class StandardProxy extends BaseProxy
 {
     const STANDARD_URI = 'Commands.svc';
     const APPLICATION_URI  = 'RestApplication.svc';
-
-    protected $client;
-
-    /**
-     * Create a new StandardProxy instance
-     *
-     * @param HttpClient $client HttpClient instance used for http request.
-     * Optionally specify an instance, otherwise use a singleton instance
-     */
-    public function __construct(HttpClient $client = null)
-    {
-        $this->client = $client !== null ? $client : HttpClient::instance();
-    }
 
     /**
      * Insert multiple aggregates with single request to the remote server

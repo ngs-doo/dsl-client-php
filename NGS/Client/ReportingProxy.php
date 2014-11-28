@@ -17,22 +17,9 @@ use NGS\Patterns\GenericSearch;
  * report population and history lookup.
  * Report should be used to minimize calls to server.
  */
-class ReportingProxy
+class ReportingProxy extends BaseProxy
 {
     const REPORTING_URI = 'Reporting.svc';
-
-    protected $client;
-
-    /**
-     * Create a new ReportingProxy instance
-     *
-     * @param HttpClient $client HttpClient instance used for http request.
-     * Optionally specify an instance, otherwise use a singleton instance
-     */
-    public function __construct(HttpClient $client = null)
-    {
-        $this->client = $client !== null ? $client : HttpClient::instance();
-    }
 
     /**
      * Populate report. Send message to server with serialized report specification.

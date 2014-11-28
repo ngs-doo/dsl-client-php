@@ -19,22 +19,9 @@ use NGS\Patterns\Repository;
  *
  * @package NGS\Client
  */
-class CrudProxy
+class CrudProxy extends BaseProxy
 {
     const CRUD_URI = 'Crud.svc';
-
-    protected $client;
-
-    /**
-     * Create a new CrudProxy instance
-     *
-     * @param HttpClient $client HttpClient instance used for http request.
-     * Optionally specify an instance, otherwise use a singleton instance
-     */
-    public function __construct(HttpClient $client = null)
-    {
-        $this->client = $client !== null ? $client : HttpClient::instance();
-    }
 
     /**
      * Create (insert) a single aggregate root on the remote server.

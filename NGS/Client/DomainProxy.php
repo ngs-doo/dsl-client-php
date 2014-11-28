@@ -19,25 +19,9 @@ use NGS\Patterns\Specification;
  * such as searching, counting and event sourcing.
  * It is preferred to use domain patterns instead of this proxy service.
  */
-class DomainProxy
+class DomainProxy extends BaseProxy
 {
     const DOMAIN_URI = 'Domain.svc';
-
-    /**
-     * @var HttpClient Instance of HttpClient used for requests
-     */
-    protected $client;
-
-    /**
-     * Create a new DomainProxy instance
-     *
-     * @param $client HttpClient Use specific client context or null for global client instance
-     * Optionally specify an instance, otherwise use a singleton instance
-     */
-    public function __construct(HttpClient $client = null)
-    {
-        $this->client = $client !== null ? $client : HttpClient::instance();
-    }
 
     /**
      * Returns an array of domain objects uniquely represented with their URIs.
