@@ -19,6 +19,7 @@ require_once __DIR__.'/Client/Exception/SecurityException.php';
 require_once __DIR__.'/Client/Exception/ClientErrorException.php';
 require_once __DIR__.'/Client/Exception/ServerErrorException.php';
 
+require_once __DIR__.'/Client/BaseProxy.php';
 require_once __DIR__.'/Client/ApplicationProxy.php';
 require_once __DIR__.'/Client/CrudProxy.php';
 require_once __DIR__.'/Client/DomainProxy.php';
