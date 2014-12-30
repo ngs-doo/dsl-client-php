@@ -27,7 +27,7 @@ module Img
     root Album
     {
         string title;
-        Bitmap[]? *bmps;
+        Bitmap[] *bmps;
         Icon?[]? icons;
         Extension[] allowed;
     }

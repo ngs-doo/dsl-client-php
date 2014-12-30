@@ -22,11 +22,16 @@ if (substr($url, strlen($url)-1) !== '/')
 $client = new NGS\Client\HttpClient($url, 'revenj', 'revenj');
 NGS\Client\HttpClient::instance($client);
 
+$revenj_path = (strpos($config['revenj_path'], '/') === 0)
+    ? $config['revenj_path']
+    : realpath(__DIR__.'/..') . '/' . $config['revenj_path'];
+
 $documents = array('template.txt' => '/template.txt');
 foreach ($documents as $src => $dest) {
-    if (file_exists($config['revenj_path'] . '/' . $dest))
+    if (file_exists($revenj_path . '/' . $dest))
         continue;
-    if (!copy(__DIR__ . '/fixtures/' . $src, $config['revenj_path'] . '/' . $dest))
+
+    if (!copy(__DIR__ . '/fixtures/' . $src, $revenj_path . '/' . $dest))
         throw new InvalidArgumentException('Could not copy test documents (' . $src . ') to revenj folder!');
 }
 

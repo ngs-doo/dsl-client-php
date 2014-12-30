@@ -51,8 +51,9 @@ class RootCollectionPropertyTest extends PHPUnit_Framework_TestCase
     {
         $obj = new \Properties\rootCollectionRoot();
 
-        $this->assertFalse(isset($obj->items));
-        $this->assertFalse(isset($obj->itemsURI));
+        // always set since references with identity cannot be nullable
+        $this->assertTrue(isset($obj->items));
+        $this->assertTrue(isset($obj->itemsURI));
 
         $obj->items = $this->roots;
 
@@ -115,9 +116,9 @@ class RootCollectionPropertyTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($roots, $obj->items);
         $this->assertEquals(array($roots[0]->URI, $roots[1]->URI), $obj->itemsURI);
 
-        unset($obj->items);
-        $this->assertNull($obj->items);
-        $this->assertNull($obj->itemsURI);
+        $obj->items = array();
+        $this->assertEquals(array(), $obj->items);
+        $this->assertEquals(array(), $obj->itemsURI);
     }
 
     public function testConverters()

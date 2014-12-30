@@ -22,13 +22,13 @@ module Properties
 
     root entityRefRoot
     {
-        entityObject?[] items;
+        entityObject[] items;
     }
 
     root rootCollectionRoot
     {
         string str;
-        rootObject[]? *items;
+        rootObject[] *items;
         rootObject[] *itemsNull;
         rootObject[] *itemsSnap { snapshot; }
     }
