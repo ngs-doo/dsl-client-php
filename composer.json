@@ -3,13 +3,14 @@
     "type": "library",
     "keywords": ["DSL", "DDD"],
     "description": "DSL platform PHP client library",
-    "homepage": "https://dsl-platform.com",
+    "homepage": "https://dsl-platform.com/",
     "license": "BSD-3-Clause",
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.3.8",
         "lib-curl": "*",
-        "ext-SimpleXML": "*"
+        "ext-SimpleXML": "*",
+        "psr/log": "~1.0"
     },
 
     "autoload": {
