@@ -1,5 +1,5 @@
 <?php
-namespace NGS;
+namespace NGS\Logger;
 
 use Psr\Log\AbstractLogger;
 use Psr\Log\LogLevel;

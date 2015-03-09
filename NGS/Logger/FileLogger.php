@@ -1,5 +1,5 @@
 <?php
-namespace NGS;
+namespace NGS\Logger;
 
 class FileLogger extends AbstractLoggerHelper
 {
