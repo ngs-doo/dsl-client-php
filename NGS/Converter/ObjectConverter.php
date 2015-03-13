@@ -65,7 +65,7 @@ class ObjectConverter implements ConverterInterface
     /**
      * Determines appropriate converter class for given object
      *
-     * @param object $object
+     * @param object|string $object
      * @param string $type Converter type; one of 'Json' or 'Array'
      * @return \NGS\Converter\ConverterInterface
      */

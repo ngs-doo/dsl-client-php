@@ -1,5 +1,6 @@
 <?php
 namespace NGS\Patterns;
+use NGS\Converter\ObjectConverter;
 
 /**
  * Aggregate root is a meaningful object in the domain.

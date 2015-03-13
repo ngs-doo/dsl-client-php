@@ -1,5 +1,6 @@
 <?php
 namespace NGS\Patterns;
+use NGS\Converter\ObjectConverter;
 
 /**
  * DomainEvent which should be used when there is an action
@@ -21,6 +22,17 @@ namespace NGS\Patterns;
  * }
  * </pre></blockquote>
  */
-abstract class AggregateDomainEvent
+abstract class AggregateDomainEvent implements \Serializable
 {
+    public function serialize()
+    {
+        $converter = ObjectConverter::getConverter(get_class($this), ObjectConverter::JSON_TYPE);
+        return $converter->toJson($this);
+    }
+
+    public function unserialize($serialized)
+    {
+        $converter = ObjectConverter::getConverter(get_class($this), ObjectConverter::JSON_TYPE);
+        return $converter::fromJson($serialized);
+    }
 }

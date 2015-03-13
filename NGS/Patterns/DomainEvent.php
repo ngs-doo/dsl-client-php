@@ -1,5 +1,6 @@
 <?php
 namespace NGS\Patterns;
+use NGS\Converter\ObjectConverter;
 
 /**
  * Domain event represents an meaningful business event that occurred in the system.
@@ -27,6 +28,17 @@ namespace NGS\Patterns;
  * }
  * </pre></blockquote>
  */
-abstract class DomainEvent
+abstract class DomainEvent implements \Serializable
 {
+    public function serialize()
+    {
+        $converter = ObjectConverter::getConverter(get_class($this), ObjectConverter::JSON_TYPE);
+        return $converter->toJson($this);
+    }
+
+    public function unserialize($serialized)
+    {
+        $converter = ObjectConverter::getConverter(get_class($this), ObjectConverter::JSON_TYPE);
+        return $converter::fromJson($serialized);
+    }
 }
