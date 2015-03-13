@@ -29,6 +29,9 @@ use NGS\Converter\ObjectConverter;
  */
 class HttpClient
 {
+    const AUTH_PASSWORD = 'password';
+    const AUTH_HASH     = 'hash';
+
     const EVENT_REQUEST_BEFORE    = 'request.before';
     const EVENT_REQUEST_SENT      = 'request.sent';
     const EVENT_REQUEST_ERROR     = 'request.error';
@@ -71,13 +74,14 @@ class HttpClient
      *
      * @param string $apiUrl Service base url
      * @param string $username
-     * @param string $password
+     * @param string $password Plain-text password or hash, based on $authType
+     * @param string $authType 'password' or 'hash'
      */
-    public function __construct($apiUrl, $username=null, $password=null)
+    public function __construct($apiUrl, $username=null, $password=null, $authType = self::AUTH_PASSWORD)
     {
         $this->apiUrl = $apiUrl;
         if ($username!==null && $password!==null) {
-            $this->setAuth($username, $password);
+            $this->setAuth($username, $password, $authType);
         }
     }
 
@@ -85,12 +89,22 @@ class HttpClient
      * Set username/password used for http authentication
      *
      * @param string $username
-     * @param string $password
+     * @param string $password Plain-text password or hash, based on $authType
+     * @param string $authType 'password' or 'hash'
      */
-    public function setAuth($username, $password)
+    public function setAuth($username, $password, $authType = self::AUTH_PASSWORD)
     {
-        $this->username = $username;
-        $this->auth = 'Basic '.base64_encode($username.':'.$password);
+        if ($authType === self::AUTH_PASSWORD) {
+            $this->username = $username;
+            $this->auth = 'Password ' . base64_encode($username . ':' . $password);
+        }
+        else if ($authType === self::AUTH_HASH) {
+            $this->username = $username;
+            $this->auth = 'Hash ' . base64_encode($username . ':' . $password);
+        }
+        else {
+            throw new \InvalidArgumentException('Invalid authorization type provided.');
+        }
     }
 
     public function getUsername()
@@ -106,7 +120,6 @@ class HttpClient
      * Gets or sets singleton instance of rest Http
      *
      * @param HttpClient $http
-     * @internal param \NGS\Client\HttpClient $client HttpClient instance
      * @return HttpClient
      */
     public static function instance(HttpClient $http = null)
