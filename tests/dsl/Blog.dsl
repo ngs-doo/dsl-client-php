@@ -8,10 +8,13 @@ module Blog
 
         Comment[] Comments;
 
-        calculated HasComments from 'it => it.Comments.Any()';
-        calculated string[]? UsersEmails from 'it => it.Comments.Select(c => c.User.Email).ToArray()';
+        /* TODO java-test */
+        /*calculated HasComments from 'it => it.Comments.Any()';*/
+
+        /* TODO java-test */
+        /*calculated string[]? UsersEmails from 'it => it.Comments.Select(c => c.User.Email).ToArray()';
         calculated string?[]? UsersNames from 'it => it.Comments.Select(c => c.User.Name).ToArray()';
-        calculated date[] CommentDates from 'it => it.Comments.Select(c => c.CreatedAt).ToArray()';
+        calculated date[] CommentDates from 'it => it.Comments.Select(c => c.CreatedAt).ToArray()';*/
 
         calculated HasCommentsWithPositiveScore from 'it => it.Comments.Any(c => c.HasPositiveScore)';
 

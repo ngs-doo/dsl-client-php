@@ -31,8 +31,12 @@ foreach ($documents as $src => $dest) {
     if (file_exists($revenj_path . '/' . $dest))
         continue;
 
-    if (!copy(__DIR__ . '/fixtures/' . $src, $revenj_path . '/' . $dest))
+    // TODO java-test
+    if (0 && !copy(__DIR__ . '/fixtures/' . $src, $revenj_path . '/' . $dest))
         throw new InvalidArgumentException('Could not copy test documents (' . $src . ') to revenj folder!');
 }
+
+// TODO java-test
+\NGS\Utils::WarningsAsErrors(false);
 
 // \DslPlatform\Installer::start();

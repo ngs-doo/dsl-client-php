@@ -23,12 +23,13 @@ module Test
             int min;
         }
     }
-
+    /* TODO java-test */
+/*
     event Foo.AddNum
     {
         int amount;
     }
-
+*/
 
     root Bar(ID)
     {
@@ -183,10 +184,11 @@ module Test
         string v2;
     }
 
-    enum en;
-
+    /* TODO java-test */
+    /*enum en;*/
+/*
     root EnumFoo
     {
         en? emptyEnum;
-    }
+    }*/
 }

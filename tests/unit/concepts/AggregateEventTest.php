@@ -75,6 +75,8 @@ class AggregateEventTest extends \PHPUnit_Framework_TestCase
      */
     public function testEventOnNonPersistedRoot()
     {
+        $this->markTestSkipped('TODO Java aggregate event');
+
         $foo = new Foo();
         $foo->AddNum(array('amount'=>56));
     }

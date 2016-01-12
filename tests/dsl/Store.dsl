@@ -17,7 +17,8 @@ module Store
         Packages;
         order by Price desc, Name asc;
 
-        specification findProductsWithPackages 'it => it.Packages.Any()';
+        /* TODO java-test */
+        /*specification findProductsWithPackages 'it => it.Packages.Any()';*/
     }
 
     root Group
