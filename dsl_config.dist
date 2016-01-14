@@ -7,5 +7,5 @@
     "db_password": "postgres",
     "dsl_path": ".\/tests\/dsl",
     "revenj_path": ".\/revenj",
-    "revenj_url": "http:\/\/localhost:9550"
+    "revenj_url": "http:\/\/localhost:8080"
 }

@@ -8,8 +8,7 @@ module Blog
 
         Comment[] Comments;
 
-        /* TODO java-test */
-        /*calculated HasComments from 'it => it.Comments.Any()';*/
+        calculated HasComments from 'it => it.Comments.Any()';
 
         /* TODO java-test */
         /*calculated string[]? UsersEmails from 'it => it.Comments.Select(c => c.User.Email).ToArray()';

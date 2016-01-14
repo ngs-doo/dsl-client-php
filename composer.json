@@ -5,7 +5,6 @@
     "description": "DSL platform PHP client library",
     "homepage": "https://dsl-platform.com/",
     "license": "BSD-3-Clause",
-    "minimum-stability": "dev",
     "require": {
         "php": ">=5.3.8",
         "lib-curl": "*",
@@ -27,8 +26,7 @@
         "post-install-cmd": [
             "DslPlatform\\Installer::compilePhp",
             "DslPlatform\\Installer::migrate",
-            "DslPlatform\\Installer::installRevenj",
-            "DslPlatform\\Installer::startRevenj"
+            "DslPlatform\\Installer::installRevenjJava"
         ]
     }
 }
